@@ -1,4 +1,4 @@
-# EssentialServer
+# EssentialServer [codacy]
 ## Table of Contents
 1.  [Supported Platforms](#Supported-Platforms)
 2.  [Supported Versions](#Supported-Versions)
