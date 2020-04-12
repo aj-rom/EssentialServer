@@ -15,7 +15,7 @@ import java.util.UUID;
 public class Teleport implements CommandExecutor {
     public static HashMap<UUID, Integer> cooldownTime  = new HashMap<>();
     public static HashMap<UUID, BukkitRunnable> cooldownTask  = new HashMap<>();
-
+    private int COOL_DOWN;
     private EssentialServer plugin;
 
     public Teleport(EssentialServer plugin) {
@@ -28,7 +28,7 @@ public class Teleport implements CommandExecutor {
         String tpMsg = plugin.getConfig().getString("teleport.message");
         String coolDownMsg = plugin.getConfig().getString("teleport.cooldown-message");
         String offlinePlayer = plugin.getConfig().getString("offline-player");
-        int COOL_DOWN = plugin.getConfig().getInt("teleport.cooldown-time");
+        COOL_DOWN = plugin.getConfig().getInt("teleport.cooldown-time");
         boolean enableMsg = plugin.getConfig().getBoolean("teleport.message-enable");
 
         if (sender instanceof Player && sender.hasPermission("essentialserver.tp")) {
@@ -44,36 +44,23 @@ public class Teleport implements CommandExecutor {
                 if (player.hasPermission("essentialserver.tp.others")) {
                     ChatUtils.msg(player, "&cTo teleport others: &e/tp &c<&bplayer&c> <&botherplayer&c>");
                 }
-            }else if(args.length == 1) {
+            }
+            else if(args.length == 1) {
                 try {
                     Player target = Bukkit.getPlayer(args[0]); //Get player from command
                     if (player.getDisplayName().equalsIgnoreCase(target.getDisplayName())) {
                         ChatUtils.msg(player, plugin.getConfig().getString("teleport.self"));
                     } else {
-                        player.teleport(target.getLocation());
                         if(enableMsg) ChatUtils.msg(player, tpMsg.replaceAll("%player%", target.getDisplayName()));
-                        if (!player.hasPermission("essentialserver.tp.bypass") && COOL_DOWN > 0) {
-                            cooldownTime.put(pUUID, COOL_DOWN);
-                            cooldownTask.put(pUUID, new BukkitRunnable() {
-                                @Override
-                                public void run() {
-                                    cooldownTime.put(pUUID, cooldownTime.get(pUUID) - 1); // decrease the cooldown
-                                    if (cooldownTime.get(pUUID) == 0) { // end of cooldown
-                                        cooldownTime.remove(pUUID);
-                                        cooldownTask.remove(pUUID);
-                                        cancel();
-                                    }
-                                }
-                            });
-                            cooldownTask.get(pUUID).runTaskTimer(plugin, 20, 20);
-                        }
+                        tPTask(player, target, player);
                     }
 
                 } catch (NullPointerException e) {
                     ChatUtils.msg(player, offlinePlayer.replaceAll("%player%", args[0]));
                     return true;
                 }
-            }else if(args.length == 2 && player.hasPermission("essentialserver.tp.others")){
+            }
+            else if(args.length == 2 && player.hasPermission("essentialserver.tp.others")){
                 try{
                 Player playerToSend = Bukkit.getPlayer(args[0]);
                 Player target = Bukkit.getPlayer(args[1]);
@@ -85,22 +72,8 @@ public class Teleport implements CommandExecutor {
                         if(enableMsg) ChatUtils.msg(sender, tpOtherMsg
                                 .replaceAll("%player1%", playerToSend.getDisplayName())
                                 .replaceAll("%player2%", target.getDisplayName()));
-                        playerToSend.teleport(target.getLocation());
-                        if (!player.hasPermission("essentialserver.tp.bypass") && COOL_DOWN > 0) {
-                            cooldownTime.put(pUUID, COOL_DOWN);
-                            cooldownTask.put(pUUID, new BukkitRunnable() {
-                                @Override
-                                public void run() {
-                                    cooldownTime.put(pUUID, cooldownTime.get(pUUID) - 1); // decrease the cooldown
-                                    if (cooldownTime.get(pUUID) == 0) { // end of cooldown
-                                        cooldownTime.remove(pUUID);
-                                        cooldownTask.remove(pUUID);
-                                        cancel();
-                                    }
-                                }
-                            });
-                            cooldownTask.get(pUUID).runTaskTimer(plugin, 20, 20);
-                        }
+                        tPTask(playerToSend, target, player);
+
                     }
                 }catch (NullPointerException e){
                     ChatUtils.msg(player, offlinePlayer.replaceAll("%player%", args[1]));
@@ -114,5 +87,32 @@ public class Teleport implements CommandExecutor {
         else ChatUtils.logMsg("&cYou must be a player to use this command!");
         return true;
     }
+
+    /**
+     * Teleport a player
+     * @param playerToSend the player who is teleporting
+     * @param target the player to teleport TO
+     * @param sender the person initiating the Teleport
+     */
+    private void tPTask(Player playerToSend, Player target, Player sender) {
+        UUID sUUID = sender.getUniqueId();
+        playerToSend.teleport(target.getLocation());
+        if (!sender.hasPermission("essentialserver.tp.bypass") && COOL_DOWN > 0) {
+            cooldownTime.put(sUUID, COOL_DOWN);
+            cooldownTask.put(sUUID, new BukkitRunnable() {
+                @Override
+                public void run() {
+                    cooldownTime.put(sUUID, cooldownTime.get(sUUID) - 1); // decrease the cooldown
+                    if (cooldownTime.get(sUUID) == 0) { // end of cooldown
+                        cooldownTime.remove(sUUID);
+                        cooldownTask.remove(sUUID);
+                        cancel();
+                    }
+                }
+            });
+            cooldownTask.get(sUUID).runTaskTimer(plugin, 20, 20);
+        }
+    }
+
 }
 
