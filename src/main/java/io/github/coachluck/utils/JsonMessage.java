@@ -57,7 +57,7 @@ public class JsonMessage {
      * @param player to send the message to.
      */
     public static void sendRawJson(String json, Player... player) {
-        String nmsClass = ((!getServerVersion().startsWith("v1_7_R")) ? "IChatBaseComponent$" : "") + "ChatSerializer";
+        String nmsClass = (!getServerVersion().startsWith("v1_7_R") ? "IChatBaseComponent$" : "") + "ChatSerializer";
         for(Player p : player) {
             try {
                 Object comp = getNmsClass(nmsClass).getMethod("a", String.class).invoke(null, json);
@@ -66,7 +66,7 @@ public class JsonMessage {
                 Object playerConnection = handle.getClass().getField("playerConnection").get(handle);
                 playerConnection.getClass().getMethod("sendPacket", getNmsClass("Packet")).invoke(playerConnection, packet);
             } catch(Exception e) {
-                e.printStackTrace();
+                ChatUtils.logMsg("&cError sending &eRAW JSON &cmessage!");
             }
         }
     }

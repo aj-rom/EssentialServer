@@ -36,6 +36,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.UUID;
+import java.util.logging.Level;
 
 public class EssentialServer extends JavaPlugin {
     public boolean updateMsg = false;
@@ -88,7 +89,7 @@ public class EssentialServer extends JavaPlugin {
         this.getCommand("Fly").setExecutor(new Fly(this));
         this.getCommand("Feed").setExecutor(new Feed(this));
         this.getCommand("Heal").setExecutor(new Heal(this));
-        this.getCommand("God").setExecutor((new God(this)));
+        this.getCommand("God").setExecutor(new God(this));
         this.getCommand("Kill").setExecutor(new Kill(this));
         this.getCommand("Clear").setExecutor(new Clear(this));
         this.getCommand("Burn").setExecutor(new Burn(this));
@@ -201,7 +202,7 @@ public class EssentialServer extends JavaPlugin {
                 warpData.set("warps.example.location", world.getSpawnLocation());
                 warpData.save(warpDataFile);
             } catch(IOException e) {
-                e.printStackTrace();
+                getLogger().log(Level.SEVERE, "Error reading/creating warps.yml file");
             }
         } else {
             warpData = YamlConfiguration.loadConfiguration(warpDataFile);

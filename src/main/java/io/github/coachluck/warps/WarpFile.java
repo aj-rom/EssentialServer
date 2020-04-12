@@ -7,6 +7,7 @@ import org.bukkit.Sound;
 import org.bukkit.configuration.file.YamlConfiguration;
 import java.io.IOException;
 import java.util.Set;
+import java.util.logging.Level;
 
 public class WarpFile {
     private EssentialServer plugin;
@@ -64,7 +65,7 @@ public class WarpFile {
             try {
                 warpData.save(plugin.warpDataFile);
             } catch (IOException e) {
-                e.printStackTrace();
+                plugin.getLogger().log(Level.SEVERE, "Could not save the warps.yml file!");
             }
         });
     }

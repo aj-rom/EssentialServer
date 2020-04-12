@@ -289,7 +289,7 @@ public class Updater {
      * before allowing anyone to check the result.
      */
     private void waitForThread() {
-        if ((this.thread != null) && this.thread.isAlive()) {
+        if (this.thread != null && this.thread.isAlive()) {
             try {
                 this.thread.join();
             } catch (final InterruptedException e) {
@@ -662,9 +662,9 @@ public class Updater {
     }
 
     private void runUpdater() {
-        if (this.url != null && (this.read() && this.versionCheck())) {
+        if (this.url != null && this.read() && this.versionCheck()) {
             // Obtain the results of the project's file feed
-            if ((this.versionLink != null) && (this.type != UpdateType.NO_DOWNLOAD)) {
+            if (this.versionLink != null && this.type != UpdateType.NO_DOWNLOAD) {
                 String name = this.file.getName();
                 // If it's a zip file, it shouldn't be downloaded as the plugin's name
                 if (this.versionLink.endsWith(".zip")) {
