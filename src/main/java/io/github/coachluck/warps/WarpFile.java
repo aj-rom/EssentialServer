@@ -44,10 +44,8 @@ public class WarpFile {
     public WarpFile() {
         plugin = EssentialServer.getPlugin(EssentialServer.class);
         warpSaveFile = new File(plugin.getDataFolder(), "warps.yml");
-        if(!plugin.getDataFolder().exists()) {
-            if(!plugin.getDataFolder().mkdirs()) {
-                ChatUtils.logMsg("&cError creating plugin files!");
-            }
+        if(!plugin.getDataFolder().exists() && !plugin.getDataFolder().mkdirs()) {
+            ChatUtils.logMsg("&cError creating plugin files!");
         }
         if(!warpSaveFile.exists()) {
             plugin.saveResource("warps.yml", false);

@@ -44,9 +44,9 @@ public class Teleport implements CommandExecutor {
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         String tpOtherMsg = plugin.getConfig().getString("teleport.others-message");
         String tpMsg = plugin.getConfig().getString("teleport.message");
-
         String offlinePlayer = plugin.getConfig().getString("offline-player");
         boolean enableMsg = plugin.getConfig().getBoolean("teleport.message-enable");
+
         if(!(sender instanceof Player)) {
             ChatUtils.logMsg("&cYou must be a player to use this command!");
             return true;
@@ -132,7 +132,7 @@ public class Teleport implements CommandExecutor {
             if(cooldowns.get(sUUID).getTimeRemaining() > 0) {
                 int rem = cooldowns.get(sUUID).getTimeRemaining();
                 ChatUtils.msg(sender, plugin.getConfig().getString("teleport.cooldown-message")
-                        .replaceAll("%time%", "" + rem));
+                        .replaceAll("%time%", Integer.toString(rem)));
                 return false;
             }
             cooldowns.remove(sUUID);

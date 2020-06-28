@@ -24,10 +24,7 @@ import io.github.coachluck.EssentialServer;
 import io.github.coachluck.utils.ChatUtils;
 import io.github.coachluck.utils.Cooldown;
 import io.github.coachluck.warps.WarpHolder;
-import net.md_5.bungee.api.chat.ClickEvent;
-import net.md_5.bungee.api.chat.ComponentBuilder;
-import net.md_5.bungee.api.chat.HoverEvent;
-import net.md_5.bungee.api.chat.TextComponent;
+import net.md_5.bungee.api.chat.*;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -37,7 +34,6 @@ import org.bukkit.entity.Player;
 
 import java.util.*;
 
-import static io.github.coachluck.utils.ChatUtils.format;
 
 public class Warp implements CommandExecutor, TabCompleter {
 
@@ -53,64 +49,57 @@ public class Warp implements CommandExecutor, TabCompleter {
         final YamlConfiguration warpData = plugin.getWarpFile().getWarpData();
         final String noPermWarp = warpData.getString("messages.no-perm-for-warp");
         final String warpNotFound = warpData.getString("messages.warp-not-found");
-        final List<String> warpListHeader = warpData.getStringList("messages.warp-list-header");
-        final List<String> warpListFooter = warpData.getStringList("messages.warp-list-footer");
         final String warpListColor = warpData.getString("messages.warp-list-color");
 
-        if(sender instanceof Player) {
-            Player p = (Player) sender;
-            if(args.length > 1) {
-                ChatUtils.msg(p, "&cIncorrect usage: &e/warp &b<WarpName>");
-                return true;
-            }
-            if(args.length == 1) {
-                String warpName = args[0].toLowerCase();
-                if(plugin.warpMap.get(warpName) == null) {
-                    ChatUtils.msg(p, warpNotFound.replaceAll("%warp%", warpName));
-                    return true;
-                }
-                if(!p.hasPermission("warps.*") && !p.hasPermission("warps." + warpName)) {
-                    ChatUtils.msg(p, noPermWarp.replaceAll("%warp%", warpName));
-                    return true;
-                }
-                if(hasCooldown(p)) {
-                    ChatUtils.msg(p, warpData.getString("messages.cooldown")
-                            .replaceAll("%time%", "" + cooldowns.get(p.getUniqueId()).getTimeRemaining()));
-                    return true;
-                }
-
-                WarpHolder warp = plugin.warpMap.get(warpName);
-                p.playSound(warp.getLocation(), warp.getWarpSound(), 1.0F, 1.0F);
-                p.teleport(warp.getLocation());
-                ChatUtils.msg(p, warp.getWarpMessage().replaceAll("%name%", warp.getDisplayName()));
-
-                return true;
-            }
-
-            final List<String> currentWarps = new ArrayList<>(plugin.warpMap.keySet());
-            ComponentBuilder warpList = new ComponentBuilder();
-            Collections.sort(currentWarps);
-            for(String s : currentWarps) {
-                if(p.hasPermission("warps." + s)) {
-                    WarpHolder warpHolder = plugin.warpMap.get(s);
-                    TextComponent warp = new TextComponent(format(warpListColor + s + warpData.getString("messages.warp-list-separator")));
-                            warp.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/warp " + s));
-                            warp.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
-                                    new ComponentBuilder(ChatUtils.format("&7Click me to warp to &e" + warpHolder.getDisplayName())).create()));
-                    warpList.append(warp);
-                }
-            }
-            for(String s : warpListHeader)
-                p.sendMessage(format(s));
-
-            p.spigot().sendMessage(warpList.create());
-
-            for(String s : warpListFooter)
-                p.sendMessage(format(s));
-
-        } else {
+        if(!(sender instanceof Player)) {
             ChatUtils.logMsg("&cYou must be a player to use this command.");
+            return true;
         }
+
+        Player p = (Player) sender;
+        if(args.length > 1) {
+            ChatUtils.msg(p, "&cIncorrect usage: &e/warp &b<WarpName>");
+            return true;
+        }
+        if(args.length == 1) {
+            String warpName = args[0].toLowerCase();
+            if(plugin.warpMap.get(warpName) == null) {
+                ChatUtils.msg(p, warpNotFound.replaceAll("%warp%", warpName));
+                return true;
+            }
+            if(!p.hasPermission("warps.*") && !p.hasPermission("warps." + warpName)) {
+                ChatUtils.msg(p, noPermWarp.replaceAll("%warp%", warpName));
+                return true;
+            }
+            if(hasCooldown(p)) {
+                ChatUtils.msg(p, warpData.getString("messages.cooldown")
+                        .replaceAll("%time%", "" + cooldowns.get(p.getUniqueId()).getTimeRemaining()));
+                return true;
+            }
+
+            WarpHolder warp = plugin.warpMap.get(warpName);
+            p.playSound(warp.getLocation(), warp.getWarpSound(), 1.0F, 1.0F);
+            p.teleport(warp.getLocation());
+            ChatUtils.msg(p, warp.getWarpMessage().replaceAll("%name%", warp.getDisplayName()));
+
+            return true;
+        }
+
+        final List<String> currentWarps = new ArrayList<>(plugin.warpMap.keySet());
+        ComponentBuilder warpList = new ComponentBuilder();
+        Collections.sort(currentWarps);
+        for(String s : currentWarps) {
+            if(p.hasPermission("warps." + s)) {
+                WarpHolder warpHolder = plugin.warpMap.get(s);
+                TextComponent warp = new TextComponent(ChatUtils.format(warpListColor + s + warpData.getString("messages.warp-list-separator")));
+                        warp.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/warp " + s));
+                        warp.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
+                                new ComponentBuilder(ChatUtils.format("&7Click me to warp to &e" + warpHolder.getDisplayName())).create()));
+                warpList.append(warp);
+            }
+        }
+        sendWarpList(p, warpList.create());
+
         return true;
     }
 
@@ -135,6 +124,18 @@ public class Warp implements CommandExecutor, TabCompleter {
 
         cooldowns.put(uuid, new Cooldown(Cooldown.CooldownType.WARP));
         return false;
+    }
+
+    private void sendWarpList(Player p, BaseComponent[] warpList) {
+        final List<String> warpListHeader = plugin.getWarpFile().getWarpData().getStringList("messages.warp-list-header");
+        final List<String> warpListFooter = plugin.getWarpFile().getWarpData().getStringList("messages.warp-list-footer");
+        for(String s : warpListHeader)
+            p.sendMessage(ChatUtils.format(s));
+
+        p.spigot().sendMessage(warpList);
+
+        for(String s : warpListFooter)
+            p.sendMessage(ChatUtils.format(s));
     }
 
     @Override
