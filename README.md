@@ -25,15 +25,16 @@ ___
 ___
 
 #### Supported Platforms
--   [x] Bukkit
 -   [x] Spigot
 -   [x] Paper
+-   [ ] Bukkit
 -   [ ] ySpigpt
 -   [ ] TacoSpigot
 -   [ ] Tunity
 -   [ ] Sponge
 
 ##### Supported Versions
+-   [X] 1.16+
 -   [x] 1.15+
 -   [x] 1.14+
 -   [x] 1.13+
