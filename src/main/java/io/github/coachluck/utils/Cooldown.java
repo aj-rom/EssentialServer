@@ -31,11 +31,12 @@ public class Cooldown {
         WARP
     }
 
-    @Getter CooldownType cooldownType;
-    @Getter int timeRemaining;
+    @Getter private final CooldownType cooldownType;
+    @Getter private int timeRemaining;
 
     public Cooldown(CooldownType type) {
         EssentialServer plugin = EssentialServer.getPlugin(EssentialServer.class);
+        cooldownType = type;
         switch (type) {
             case TELEPORT:
                 timeRemaining = plugin.getConfig().getInt("teleport.cooldown-time");
@@ -43,6 +44,7 @@ public class Cooldown {
             case WARP:
                 timeRemaining = plugin.getWarpFile().getWarpData().getInt("cooldown");
                 break;
+            default: break;
         }
 
         BukkitRunnable task = new BukkitRunnable() {
