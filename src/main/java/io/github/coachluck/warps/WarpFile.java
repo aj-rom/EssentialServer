@@ -1,6 +1,6 @@
 /*
  *     File: WarpFile.java
- *     Last Modified: 6/28/20, 3:44 PM
+ *     Last Modified: 6/28/20, 5:18 PM
  *     Project: EssentialServer
  *     Copyright (C) 2020 CoachL_ck
  *
@@ -51,6 +51,7 @@ public class WarpFile {
             plugin.saveResource("warps.yml", false);
         }
         warpData = YamlConfiguration.loadConfiguration(warpSaveFile);
+
     }
 
     public Location getLocation(String warpName) {

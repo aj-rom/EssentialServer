@@ -1,6 +1,6 @@
 /*
  *     File: Help.java
- *     Last Modified: 6/28/20, 3:44 PM
+ *     Last Modified: 6/28/20, 5:59 PM
  *     Project: EssentialServer
  *     Copyright (C) 2020 CoachL_ck
  *
@@ -44,15 +44,15 @@ public class Help implements CommandExecutor {
     }
 
     public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String[] args) {
-        if (cmd.getName().equalsIgnoreCase("eshelp") && sender.hasPermission("essentialserver.eshelp")) {
+        if (cmd.getName().equalsIgnoreCase("eshelp")) {
             sendHelp(sender);
             return true;
         }
         else if(cmd.getName().equalsIgnoreCase("es") && sender.hasPermission("essentialserver.info")) {
             if(args.length != 1) {
                 if (sender instanceof Player) {
-                    ComponentBuilder msg = new ComponentBuilder(ChatUtils.format("&8[&bEssential Server&8]&e v" + plugin.getDescription().getVersion() + " &7created by "));
-                    BaseComponent info = new TextComponent(ChatUtils.format("&bCoachL_ck"));
+                    ComponentBuilder msg = new ComponentBuilder(ChatUtils.format("&8[&cEssential Server&8]&e v" + plugin.getDescription().getVersion() + " &7created by "));
+                    BaseComponent info = new TextComponent(ChatUtils.format("&cCoachL_ck"));
                     info.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://bit.ly/346mO6j"));
                     info.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(ChatUtils.format("&eClick Me&7!")).create()));
                     msg.append(info);
@@ -80,8 +80,8 @@ public class Help implements CommandExecutor {
             Player p = (Player) sender;
             List<Command> cmdList = PluginCommandYamlParser.parse(plugin);
             p.sendMessage("");
-            p.sendMessage(ChatUtils.format("&b&m                                   &r&7[ &e&lHelp&r &7]&b&m                                  "));
-            TextComponent header = new TextComponent(ChatUtils.format("&7Hover over &ecommands &7for more info, &6click &7to run the command"));
+            p.sendMessage(ChatUtils.format("&7&m                                   &r&8[ &c&lHelp&r &8]&7&m                                  "));
+            TextComponent header = new TextComponent(ChatUtils.format(" &7Hover over &ecommands &7for more info, &eclick &7to run the command"));
             header.setColor(ChatColor.GRAY);
             header.setHoverEvent(
                     new HoverEvent(HoverEvent.Action.SHOW_TEXT,
@@ -92,6 +92,7 @@ public class Help implements CommandExecutor {
             p.sendMessage("");
 
             ComponentBuilder main = new ComponentBuilder();
+            main.append(" ");
             for(Command cmd : cmdList) {
                 if(p.hasPermission(cmd.getPermission())) {
                     main.append(ChatUtils.getClickHelp(cmd));
@@ -101,7 +102,7 @@ public class Help implements CommandExecutor {
 
             p.spigot().sendMessage(main.create());
             p.sendMessage("");
-            p.sendMessage(ChatUtils.format("&b&m                           &r&7[ &eEssential Server&r &7]&b&m                           "));
+            p.sendMessage(ChatUtils.format("&7&m                           &r&8[ &cEssential Server&r &8]&7&m                           "));
             p.sendMessage("");
         } else {
             ChatUtils.logMsg("&cThis can only be used in game.");

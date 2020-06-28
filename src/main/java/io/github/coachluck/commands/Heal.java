@@ -1,6 +1,6 @@
 /*
  *     File: Heal.java
- *     Last Modified: 4/10/20, 6:51 PM
+ *     Last Modified: 6/28/20, 6:22 PM
  *     Project: EssentialServer
  *     Copyright (C) 2020 CoachL_ck
  *
@@ -44,22 +44,28 @@ public class Heal implements CommandExecutor {
         String healOtherMsg = plugin.getConfig().getString("heal.other-message");
         boolean enableMsg = plugin.getConfig().getBoolean("heal.message-enable");
 
-        if (args.length == 0 && sender.hasPermission("essentialserver.heal")) {
-            if (sender instanceof Player) {
-                Player player = (Player) sender;
-                setHealth(player);
-                if (enableMsg) ChatUtils.msg(player, healMsg);
-            } else
-                ChatUtils.msg(sender, "&cYou must be a player to execute this command!");
-        } else if (args.length == 1 && sender.hasPermission("essentialserver.heal.others")) {
+        if (args.length == 1) {
+            if (!sender.hasPermission("essentialserver.heal.others")) {
+                sender.sendMessage(ChatUtils.format(plugin.pMsg));
+                return true;
+            }
             Player target = Bukkit.getPlayerExact(args[0]);
-            if(target == null) {
-                ChatUtils.msg(sender, "&cThe specified player could not be found!");
+            if (target == null) {
+                ChatUtils.msg(sender, plugin.getConfig().getString("offline-player"));
                 return true;
             }
             setHealth(target);
             ChatUtils.sendMessages(sender, healMsg, healOtherMsg, healMsg, enableMsg, target);
-        } else if (args.length > 1) ChatUtils.msg(sender, "&cToo many arguments! Try /heal <player> or /heal.");
+            return true;
+        }
+
+        if (sender instanceof Player) {
+            Player player = (Player) sender;
+            setHealth(player);
+            if (enableMsg) ChatUtils.msg(player, healMsg);
+            return true;
+        }
+        ChatUtils.msg(sender, "&cYou must be a player to execute this command!");
         return true;
     }
 

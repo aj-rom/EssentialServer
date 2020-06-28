@@ -1,6 +1,6 @@
 /*
  *     File: ChatUtils.java
- *     Last Modified: 6/28/20, 12:59 AM
+ *     Last Modified: 6/28/20, 6:04 PM
  *     Project: EssentialServer
  *     Copyright (C) 2020 CoachL_ck
  *
@@ -99,7 +99,7 @@ public class ChatUtils {
         cmdText.setColor(net.md_5.bungee.api.ChatColor.YELLOW);
 
         cmdText.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
-                new ComponentBuilder(format("&b" + cmd.getName() + "&7: &e" + cmd.getUsage() + "\n" + "&7" + cmd.getDescription())).create()));
+                new ComponentBuilder(format("&c" + cmd.getUsage() + "\n" + "&7" + cmd.getDescription())).create()));
         cmdText.setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/" + cmd.getName().toLowerCase() + " "));
         return cmdText;
     }

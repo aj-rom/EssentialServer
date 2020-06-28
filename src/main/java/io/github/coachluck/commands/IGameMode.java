@@ -1,6 +1,6 @@
 /*
  *     File: IGameMode.java
- *     Last Modified: 6/28/20, 2:21 PM
+ *     Last Modified: 6/28/20, 5:52 PM
  *     Project: EssentialServer
  *     Copyright (C) 2020 CoachL_ck
  *
@@ -46,7 +46,7 @@ public class IGameMode implements CommandExecutor {
         if(sender instanceof Player && sender.hasPermission("essentialserver.gamemode")) {
             Player p = (Player) sender;
             if (args.length == 0) {
-                ChatUtils.msg(p, "&cPlease specify a gamemode! &e/gamemode &7[&bmode&7]&c.");
+                ChatUtils.msg(p, "&cPlease specify a gamemode! &e/gamemode &c<&7mode&c>&c.");
                 return true;
             }
             else if (args.length == 1) {

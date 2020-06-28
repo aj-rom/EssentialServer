@@ -1,6 +1,6 @@
 /*
  *     File: PlayerJoinLeave.java
- *     Last Modified: 6/28/20, 2:37 PM
+ *     Last Modified: 6/28/20, 5:48 PM
  *     Project: EssentialServer
  *     Copyright (C) 2020 CoachL_ck
  *
@@ -42,8 +42,8 @@ public class PlayerJoinLeave implements Listener {
 
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent e) {
-        enableMsg = plugin.getConfig().getBoolean("enable-message");
-        String joinMsg = plugin.getConfig().getString("join-message");
+        enableMsg = plugin.getConfig().getBoolean("Join-Leave.enable-message");
+        String joinMsg = plugin.getConfig().getString("Join-Leave.join-message");
         Player player = e.getPlayer();
         if(!plugin.vanish_players.isEmpty()) {
             for (int i = 0; i < plugin.vanish_players.size(); i++) {
@@ -58,8 +58,8 @@ public class PlayerJoinLeave implements Listener {
 
     @EventHandler
     public void onPlayerLeave(PlayerQuitEvent e) {
-        enableMsg = plugin.getConfig().getBoolean("enable-message");
-        String quitMsg = plugin.getConfig().getString("leave-message");
+        enableMsg = plugin.getConfig().getBoolean("Join-Leave.enable-message");
+        String quitMsg = plugin.getConfig().getString("Join-Leave.leave-message");
         if(enableMsg) e.setQuitMessage(format(quitMsg.replace("%player%", e.getPlayer().getDisplayName())));
         if(plugin.vanish_players.contains(e.getPlayer().getUniqueId())) {
             plugin.vanish_players.remove(e.getPlayer().getUniqueId());

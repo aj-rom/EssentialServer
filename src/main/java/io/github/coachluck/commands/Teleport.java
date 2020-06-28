@@ -1,6 +1,6 @@
 /*
  *     File: Teleport.java
- *     Last Modified: 6/28/20, 4:31 PM
+ *     Last Modified: 6/28/20, 5:50 PM
  *     Project: EssentialServer
  *     Copyright (C) 2020 CoachL_ck
  *
@@ -109,9 +109,9 @@ public class Teleport implements CommandExecutor {
      */
     private void sendUsage(Player player) {
         ChatUtils.msg(player, "&cInsufficient arguments! &7Please try again.");
-        ChatUtils.msg(player, "&cTo teleport yourself: &e/tp &c<&botherplayer&c>");
+        ChatUtils.msg(player, "&cTo teleport yourself: &e/tp &c<&7otherplayer&c>");
         if (player.hasPermission("essentialserver.tp.others")) {
-            ChatUtils.msg(player, "&cTo teleport others: &e/tp &c<&bplayer&c> <&botherplayer&c>");
+            ChatUtils.msg(player, "&cTo teleport others: &e/tp &c<&7player&c> <&7otherplayer&c>");
         }
     }
 

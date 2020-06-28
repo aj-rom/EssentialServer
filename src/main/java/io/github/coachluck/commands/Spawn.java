@@ -1,6 +1,6 @@
 /*
  *     File: Spawn.java
- *     Last Modified: 6/28/20, 2:59 PM
+ *     Last Modified: 6/28/20, 6:13 PM
  *     Project: EssentialServer
  *     Copyright (C) 2020 CoachL_ck
  *
@@ -35,6 +35,10 @@ public class Spawn implements CommandExecutor {
     private final EssentialServer plugin;
     public Spawn(EssentialServer plugin) {
         this.plugin = plugin;
+        if(plugin.getConfig().getString("spawn.world") == null) {
+            World world = Bukkit.getServer().getWorlds().get(0);
+            setLocation(world.getSpawnLocation());
+        }
     }
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
@@ -43,66 +47,84 @@ public class Spawn implements CommandExecutor {
         boolean enableMessage = plugin.getConfig().getBoolean("spawn.enable-message");
         String offlinePlayer = plugin.getConfig().getString("offline-player");
 
-        if(cmd.getName().equalsIgnoreCase("setspawn")) {
-            if(!(sender instanceof Player)) {
-                ChatUtils.logMsg("&cYou must be ingame to use this command!");
+        Location spawn_loc = getSpawnLocation();
+        if (!(sender instanceof Player)) {
+            if(args.length < 1) {
+                ChatUtils.logMsg("&cIncorrect usage, try &e/spawn &7[&bplayer&7]");
+                return true;
+            }
+            Player target = Bukkit.getPlayerExact(args[0]);
+            if (target == null) {
+                ChatUtils.msg(sender, offlinePlayer.replaceAll("%player%", args[0]));
                 return true;
             }
 
-            Player p = (Player) sender;
-            plugin.getConfig().set("spawn.world", p.getWorld().getName());
-            plugin.getConfig().set("spawn.x", p.getLocation().getX());
-            plugin.getConfig().set("spawn.y", p.getLocation().getY());
-            plugin.getConfig().set("spawn.z", p.getLocation().getZ());
-            plugin.getConfig().set("spawn.yaw", p.getLocation().getYaw());
-            plugin.getConfig().set("spawn.pitch", p.getLocation().getPitch());
-            plugin.saveConfig();
-            ChatUtils.msg(p, "&aYou have successfully set the spawn.");
+            target.teleport(spawn_loc);
+            if (enableMessage) {
+                ChatUtils.msg(target, spawnMsg);
+                ChatUtils.msg(sender, spawnOtherMsg.replaceAll("%player%", target.getName()));
+            }
+            return true;
         }
-        else if(cmd.getName().equalsIgnoreCase("spawn") && sender.hasPermission("essentialserver.spawn")) {
 
-            if(plugin.getConfig().getString("spawn.world") == null) {
-                ChatUtils.msg(sender, "&cPlease do &b/setspawn &cbefore you try and spawn!");
-                return true;
-            }
-
-            World world = Bukkit.getWorld(plugin.getConfig().getString("spawn.world"));
-            double X = plugin.getConfig().getDouble("spawn.x");
-            double Y = plugin.getConfig().getDouble("spawn.y");
-            double Z = plugin.getConfig().getDouble("spawn.z");
-            float yaw = (float) plugin.getConfig().getDouble("spawn.yaw");
-            float pitch = (float) plugin.getConfig().getDouble("spawn.pitch");
-            Location spawn_loc = new Location(world, X, Y, Z, yaw, pitch);
-
-            if(args.length == 0) {
-                if(!(sender instanceof Player)) {
-                    ChatUtils.logMsg("&cInccorect usage, try &a/spawn [&bplayer&a]");
-                    return true;
-                }
-
-                Player player = (Player) sender;
-                if(enableMessage) ChatUtils.msg(player, spawnMsg);
+        Player player = (Player) sender;
+        switch(args.length) {
+            case 0:
+                if (enableMessage) ChatUtils.msg(player, spawnMsg);
                 player.teleport(spawn_loc);
                 return true;
-            }
-            if(args.length == 1) {
-                if(!sender.hasPermission("essentialserver.spawn.others")) {
-                    ChatUtils.msg(sender, plugin.pMsg);
+            case 1:
+                if (!player.hasPermission("essentialserver.spawn.others")) {
+                    player.sendMessage(ChatUtils.format(plugin.pMsg));
                     return true;
                 }
                 Player target = Bukkit.getPlayerExact(args[0]);
-                if(target == null) {
-                    ChatUtils.msg(sender, offlinePlayer.replaceAll("%player%", args[0]));
+                if (target == null) {
+                    ChatUtils.msg(player, offlinePlayer
+                            .replaceAll("%player%", args[0]));
+                    return true;
                 }
 
                 target.teleport(spawn_loc);
-                if(enableMessage) {
+                if (enableMessage) {
                     ChatUtils.msg(target, spawnMsg);
-                    ChatUtils.msg(sender, spawnOtherMsg.replaceAll("%player%", target.getName()));
+                    ChatUtils.msg(player, spawnOtherMsg
+                            .replaceAll("%player%", target.getName()));
                 }
                 return true;
-            }
+            default:
+                    player.teleport(spawn_loc);
+                return true;
         }
-        return true;
+    }
+
+    /**
+     * Gets the spawn location from the config
+     * @return the Bukkit Location of the spawn
+     */
+    private Location getSpawnLocation() {
+        EssentialServer plugin = EssentialServer.getPlugin(EssentialServer.class);
+        World world = Bukkit.getWorld(plugin.getConfig().getString("spawn.world"));
+        double X = plugin.getConfig().getDouble("spawn.x");
+        double Y = plugin.getConfig().getDouble("spawn.y");
+        double Z = plugin.getConfig().getDouble("spawn.z");
+        float yaw = (float) plugin.getConfig().getDouble("spawn.yaw");
+        float pitch = (float) plugin.getConfig().getDouble("spawn.pitch");
+        return new Location(world, X, Y, Z, yaw, pitch);
+    }
+
+    /**
+     * Sets the location for the spawnpoint in the config
+     * @param location the location to set it too.
+     */
+    private void setLocation(Location location) {
+        EssentialServer plugin = EssentialServer.getPlugin(EssentialServer.class);
+        plugin.getConfig().set("spawn.world", location.getWorld().getName());
+        plugin.getConfig().set("spawn.x", location.getX());
+        plugin.getConfig().set("spawn.y", location.getY());
+        plugin.getConfig().set("spawn.z", location.getZ());
+        plugin.getConfig().set("spawn.yaw", location.getYaw());
+        plugin.getConfig().set("spawn.pitch", location.getPitch());
+        plugin.saveConfig();
     }
 }
