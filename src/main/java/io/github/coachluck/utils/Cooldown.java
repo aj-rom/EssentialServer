@@ -1,6 +1,6 @@
 /*
  *     File: Cooldown.java
- *     Last Modified: 6/28/20, 2:28 PM
+ *     Last Modified: 6/28/20, 4:14 PM
  *     Project: EssentialServer
  *     Copyright (C) 2020 CoachL_ck
  *
@@ -23,6 +23,9 @@ package io.github.coachluck.utils;
 import io.github.coachluck.EssentialServer;
 import lombok.Getter;
 import org.bukkit.scheduler.BukkitRunnable;
+
+import java.util.HashMap;
+import java.util.UUID;
 
 public class Cooldown {
 
@@ -59,4 +62,17 @@ public class Cooldown {
         task.runTaskTimerAsynchronously(plugin, 20, 20);
     }
 
+    public static boolean checkCooldown(UUID uuid, HashMap<UUID, Cooldown> cooldowns) {
+        if(cooldowns.get(uuid) != null) {
+            Cooldown cooldown = cooldowns.get(uuid);
+            if(cooldown.getTimeRemaining() != 0)
+                return true;
+
+            cooldowns.remove(uuid);
+            return false;
+        }
+
+        cooldowns.put(uuid, new Cooldown(Cooldown.CooldownType.WARP));
+        return false;
+    }
 }
