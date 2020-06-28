@@ -27,10 +27,10 @@ import org.bukkit.Sound;
 
 public class WarpHolder {
 
-    @Getter @Setter Location location;
-    @Getter @Setter Sound warpSound;
-    @Getter @Setter String warpMessage;
-    @Getter @Setter String displayName;
+    @Getter @Setter private Location location;
+    @Getter @Setter private Sound warpSound;
+    @Getter @Setter private String warpMessage;
+    @Getter @Setter private String displayName;
 
     public WarpHolder(Location location, Sound warpSound, String warpMessage, String displayName) {
         this.location = location;
