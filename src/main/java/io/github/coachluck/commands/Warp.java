@@ -24,7 +24,12 @@ import io.github.coachluck.EssentialServer;
 import io.github.coachluck.utils.ChatUtils;
 import io.github.coachluck.utils.Cooldown;
 import io.github.coachluck.warps.WarpHolder;
-import net.md_5.bungee.api.chat.*;
+
+import net.md_5.bungee.api.chat.BaseComponent;
+import net.md_5.bungee.api.chat.ClickEvent;
+import net.md_5.bungee.api.chat.ComponentBuilder;
+import net.md_5.bungee.api.chat.HoverEvent;
+import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -32,7 +37,11 @@ import org.bukkit.command.TabCompleter;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 
-import java.util.*;
+import java.util.UUID;
+import java.util.List;
+import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.Collections;
 
 
 public class Warp implements CommandExecutor, TabCompleter {
