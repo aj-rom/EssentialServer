@@ -1,6 +1,6 @@
 /*
  *     File: EssentialServer.java
- *     Last Modified: 6/28/20, 2:45 PM
+ *     Last Modified: 6/28/20, 3:44 PM
  *     Project: EssentialServer
  *     Copyright (C) 2020 CoachL_ck
  *
@@ -20,7 +20,23 @@
 
 package io.github.coachluck;
 
-import io.github.coachluck.commands.*;
+import io.github.coachluck.commands.Burn;
+import io.github.coachluck.commands.Clear;
+import io.github.coachluck.commands.DelWarp;
+import io.github.coachluck.commands.Feed;
+import io.github.coachluck.commands.Fly;
+import io.github.coachluck.commands.God;
+import io.github.coachluck.commands.Heal;
+import io.github.coachluck.commands.Help;
+import io.github.coachluck.commands.IGameMode;
+import io.github.coachluck.commands.InvSee;
+import io.github.coachluck.commands.Kill;
+import io.github.coachluck.commands.SetWarp;
+import io.github.coachluck.commands.Smite;
+import io.github.coachluck.commands.Spawn;
+import io.github.coachluck.commands.Teleport;
+import io.github.coachluck.commands.Vanish;
+import io.github.coachluck.commands.Warp;
 import io.github.coachluck.events.PlayerJoinLeave;
 import io.github.coachluck.tabcompleters.PlayerTabList;
 import io.github.coachluck.tabcompleters.TabList;
@@ -44,7 +60,7 @@ public class EssentialServer extends JavaPlugin {
     public ArrayList<UUID> vanish_players = new ArrayList<>();
 
     public HashMap<String, WarpHolder> warpMap = new HashMap<>();
-    @Getter @Setter WarpFile warpFile;
+    @Getter @Setter private WarpFile warpFile;
 
     @Override
     public void onEnable() {

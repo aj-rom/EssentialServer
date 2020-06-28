@@ -1,6 +1,6 @@
 /*
  *     File: WarpFile.java
- *     Last Modified: 6/28/20, 2:54 PM
+ *     Last Modified: 6/28/20, 3:44 PM
  *     Project: EssentialServer
  *     Copyright (C) 2020 CoachL_ck
  *
@@ -38,7 +38,7 @@ import java.util.logging.Level;
 public class WarpFile {
 
     private final EssentialServer plugin;
-    @Getter final YamlConfiguration warpData;
+    @Getter private final YamlConfiguration warpData;
     private final File warpSaveFile;
 
     public WarpFile() {

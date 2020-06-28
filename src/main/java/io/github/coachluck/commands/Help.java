@@ -1,6 +1,6 @@
 /*
  *     File: Help.java
- *     Last Modified: 6/28/20, 12:38 PM
+ *     Last Modified: 6/28/20, 3:44 PM
  *     Project: EssentialServer
  *     Copyright (C) 2020 CoachL_ck
  *
@@ -24,7 +24,11 @@ import io.github.coachluck.EssentialServer;
 import io.github.coachluck.utils.ChatUtils;
 import io.github.coachluck.warps.WarpFile;
 import net.md_5.bungee.api.ChatColor;
-import net.md_5.bungee.api.chat.*;
+import net.md_5.bungee.api.chat.BaseComponent;
+import net.md_5.bungee.api.chat.ComponentBuilder;
+import net.md_5.bungee.api.chat.TextComponent;
+import net.md_5.bungee.api.chat.HoverEvent;
+import net.md_5.bungee.api.chat.ClickEvent;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
