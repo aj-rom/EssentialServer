@@ -1,6 +1,6 @@
 /*
  *     File: Teleport.java
- *     Last Modified: 6/28/20, 4:10 PM
+ *     Last Modified: 6/28/20, 4:14 PM
  *     Project: EssentialServer
  *     Copyright (C) 2020 CoachL_ck
  *
@@ -23,7 +23,6 @@ package io.github.coachluck.commands;
 import io.github.coachluck.EssentialServer;
 import io.github.coachluck.utils.ChatUtils;
 import io.github.coachluck.utils.Cooldown;
-import io.github.coachluck.utils.Util;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -131,7 +130,7 @@ public class Teleport implements CommandExecutor {
         if(player.hasPermission("essentialserver.tp.bypass"))
             return false;
 
-        return Util.checkCooldown(uuid, cooldowns);
+        return Cooldown.checkCooldown(uuid, cooldowns);
     }
 
 

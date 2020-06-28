@@ -1,6 +1,6 @@
 /*
  *     File: Warp.java
- *     Last Modified: 6/28/20, 4:10 PM
+ *     Last Modified: 6/28/20, 4:14 PM
  *     Project: EssentialServer
  *     Copyright (C) 2020 CoachL_ck
  *
@@ -23,7 +23,6 @@ package io.github.coachluck.commands;
 import io.github.coachluck.EssentialServer;
 import io.github.coachluck.utils.ChatUtils;
 import io.github.coachluck.utils.Cooldown;
-import io.github.coachluck.utils.Util;
 import io.github.coachluck.warps.WarpHolder;
 
 import net.md_5.bungee.api.chat.BaseComponent;
@@ -123,7 +122,7 @@ public class Warp implements CommandExecutor, TabCompleter {
         if(player.hasPermission("warps.bypass-cooldown"))
             return false;
 
-        return Util.checkCooldown(uuid, cooldowns);
+        return Cooldown.checkCooldown(uuid, cooldowns);
     }
 
     private void sendWarpList(Player p, BaseComponent[] warpList) {
