@@ -1,6 +1,6 @@
 /*
  *     File: Teleport.java
- *     Last Modified: 6/28/20, 4:14 PM
+ *     Last Modified: 6/28/20, 4:31 PM
  *     Project: EssentialServer
  *     Copyright (C) 2020 CoachL_ck
  *
@@ -50,62 +50,57 @@ public class Teleport implements CommandExecutor {
         }
 
         Player player = (Player) sender;
-        if (args.length == 0 ) {
-            sendUsage(player);
-            return true;
-        }
+        switch(args.length) {
+            case 1:
+                Player target = Bukkit.getPlayer(args[0]);
+                if(target == null) {
+                    ChatUtils.msg(player, offlinePlayer.replaceAll("%player%", args[0]));
+                    return true;
+                }
+                if (player.getDisplayName().equalsIgnoreCase(target.getDisplayName())) {
+                    ChatUtils.msg(player, plugin.getConfig().getString("teleport.self"));
+                    return true;
+                }
+                if(hasCooldown(player)) {
+                    ChatUtils.msg(player, plugin.getConfig().getString("teleport.cooldown-message")
+                            .replaceAll("%time%", Integer.toString(cooldowns.get(player.getUniqueId()).getTimeRemaining())));
+                    return true;
+                }
 
-        if(args.length == 1) {
-            Player target = Bukkit.getPlayer(args[0]);
-            if(target == null) {
-                ChatUtils.msg(player, offlinePlayer.replaceAll("%player%", args[0]));
+                tPTask(player, target);
                 return true;
-            }
-            if (player.getDisplayName().equalsIgnoreCase(target.getDisplayName())) {
-                ChatUtils.msg(player, plugin.getConfig().getString("teleport.self"));
-                return true;
-            }
-            if(hasCooldown(player)) {
-                ChatUtils.msg(player, plugin.getConfig().getString("teleport.cooldown-message")
-                        .replaceAll("%time%", Integer.toString(cooldowns.get(player.getUniqueId()).getTimeRemaining())));
-                return true;
-            }
+            case 2:
+                if(!player.hasPermission("essentialserver.tp.others")) {
+                    sendUsage(player);
+                    return true;
+                }
 
-            tPTask(player, target);
-            return true;
-        }
-        if(args.length == 2) {
-            if(!player.hasPermission("essentialserver.tp.others")) {
+                final Player playerToSend = Bukkit.getPlayer(args[0]);
+                final Player target1 = Bukkit.getPlayer(args[1]);
+                if(playerToSend == null) {
+                    ChatUtils.msg(player, offlinePlayer.replaceAll("%player%", args[0]));
+                    return true;
+                }
+                if(target1 == null) {
+                    ChatUtils.msg(player, offlinePlayer.replaceAll("%player%", args[1]));
+                    return true;
+                }
+                if(playerToSend.getDisplayName().equalsIgnoreCase(target1.getDisplayName())) {
+                    ChatUtils.msg(player, "&cDid you really mean to do that? Try again...");
+                    return true;
+                }
+                if(hasCooldown(player)) {
+                    ChatUtils.msg(player, plugin.getConfig().getString("teleport.cooldown-message")
+                            .replaceAll("%time%", Integer.toString(cooldowns.get(player.getUniqueId()).getTimeRemaining())));
+                    return true;
+                }
+
+                tPTask(playerToSend, target1, player);
+                return true;
+            default:
                 sendUsage(player);
                 return true;
-            }
-
-            final Player playerToSend = Bukkit.getPlayer(args[0]);
-            final Player target = Bukkit.getPlayer(args[1]);
-            if(playerToSend == null) {
-                ChatUtils.msg(player, offlinePlayer.replaceAll("%player%", args[0]));
-                return true;
-            }
-            if(target == null) {
-                ChatUtils.msg(player, offlinePlayer.replaceAll("%player%", args[1]));
-                return true;
-            }
-            if(playerToSend.getDisplayName().equalsIgnoreCase(target.getDisplayName())) {
-                ChatUtils.msg(player, "&cDid you really mean to do that? Try again...");
-                return true;
-            }
-            if(hasCooldown(player)) {
-                ChatUtils.msg(player, plugin.getConfig().getString("teleport.cooldown-message")
-                        .replaceAll("%time%", Integer.toString(cooldowns.get(player.getUniqueId()).getTimeRemaining())));
-                return true;
-            }
-
-            tPTask(playerToSend, target, player);
-            return true;
         }
-
-        sendUsage(player);
-        return true;
     }
 
     /**
