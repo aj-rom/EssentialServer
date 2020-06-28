@@ -1,3 +1,23 @@
+/*
+ *     File: IGameMode.java
+ *     Last Modified: 6/28/20, 2:21 PM
+ *     Project: EssentialServer
+ *     Copyright (C) 2020 CoachL_ck
+ *
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ *
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package io.github.coachluck.commands;
 
 import io.github.coachluck.EssentialServer;
@@ -21,36 +41,58 @@ public class IGameMode implements CommandExecutor {
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
         boolean enableMsg = plugin.getConfig().getBoolean("gamemode.message-enable");
         String gOtherMsg = plugin.getConfig().getString("gamemode.message-others");
-        String noPlayer = "&cSpecified player could not be found!";
+        String offlinePlayer = plugin.getConfig().getString("offline-player");
 
         if(sender instanceof Player && sender.hasPermission("essentialserver.gamemode")) {
             Player p = (Player) sender;
-            if (args.length == 0) ChatUtils.msg(p, "&cPlease specify a gamemode! &a/gamemode [&bmode&a]&c.");
-            else if (args.length == 1) changeGM(args[0], p, sender);
-            else if (args.length == 2 && sender.hasPermission("essentialserver.gamemode.others")) {
-                if (Bukkit.getPlayerExact(args[1]) != null) {
-                    Player target = Bukkit.getPlayerExact(args[1]);
-                    if (enableMsg && !p.getDisplayName().equalsIgnoreCase(target.getDisplayName()))
-                        ChatUtils.msg(sender, gOtherMsg
-                                .replaceAll("%player%", target.getDisplayName())
-                                .replaceAll("%mode%", args[0].toLowerCase()));
-                    changeGM(args[0], target, sender);
-                } else ChatUtils.msg(sender, noPlayer);
-            } else badUse(sender);
-        } else if (sender instanceof ConsoleCommandSender){
-            if(args.length != 2) badUse(sender);
-            else {
-                if (Bukkit.getPlayerExact(args[1]) != null) {
-                    Player target = Bukkit.getPlayerExact(args[1]);
-                    changeGM(args[0], target, sender);
-                    if (enableMsg)
-                        ChatUtils.msg(sender, gOtherMsg
+            if (args.length == 0) {
+                ChatUtils.msg(p, "&cPlease specify a gamemode! &e/gamemode &7[&bmode&7]&c.");
+                return true;
+            }
+            else if (args.length == 1) {
+                changeGM(args[0], p, sender);
+                return true;
+            }
+            else if (args.length == 2) {
+                if(!sender.hasPermission("essentialserver.gamemode.others")) {
+                    ChatUtils.msg(sender, "&cIncorrect Syntax: &e/gamemode &7[&bmode&7]");
+                    return true;
+                }
+                Player target = Bukkit.getPlayerExact(args[1]);
+                if(target == null) {
+                    ChatUtils.msg(sender, offlinePlayer);
+                    return true;
+                }
+                if (enableMsg && !p.getDisplayName().equalsIgnoreCase(target.getDisplayName())) {
+                    ChatUtils.msg(sender, gOtherMsg
                             .replaceAll("%player%", target.getDisplayName())
                             .replaceAll("%mode%", args[0].toLowerCase()));
-                } else ChatUtils.msg(sender, noPlayer);
-            }
+                }
+                changeGM(args[0], target, sender);
+                return true;
+            } else badUse(sender);
         }
-    return true;
+        else if (sender instanceof ConsoleCommandSender) {
+            if(args.length != 2) {
+                badUse(sender);
+                return true;
+            }
+
+            Player target = Bukkit.getPlayerExact(args[1]);
+            if(target == null) {
+                ChatUtils.msg(sender, offlinePlayer);
+                return true;
+            }
+            if (enableMsg) {
+                ChatUtils.msg(sender, gOtherMsg
+                        .replaceAll("%player%", target.getDisplayName())
+                        .replaceAll("%mode%", args[0].toLowerCase()));
+            }
+            changeGM(args[0], target, sender);
+            return true;
+        }
+
+        return true;
     }
 
     /**
