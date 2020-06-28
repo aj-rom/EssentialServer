@@ -1,5 +1,26 @@
+/*
+ *     File: ChatUtils.java
+ *     Last Modified: 6/28/20, 12:59 AM
+ *     Project: EssentialServer
+ *     Copyright (C) 2020 CoachL_ck
+ *
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ *
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package io.github.coachluck.utils;
 
+import net.md_5.bungee.api.chat.*;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -35,6 +56,11 @@ public class ChatUtils {
     public static void logMsg(String message) {
         Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "&7[&eEssentialServer&7]&r " + message));
     }
+
+    public static void sendPluginMessage(Player p, String message) {
+        p.sendMessage(format("&7[&bEssential&eServer&7]&e " + message));
+    }
+
     /**
      * Basic Message handler
      * @param sender who to send the messages too
@@ -58,14 +84,19 @@ public class ChatUtils {
             }
         }
     }
+
     /**
-     * Makes the help page main body from a JsonMessage, and a player, used within a loop of commands
-     * @param jMsg the JsonMessage to update
-     * @param cmd the command to extract name, usage, description from
-     * **/
-    public static JsonMessage getClickHelp(JsonMessage jMsg, Command cmd) {
-        String cmdName = cmd.getName();
-        jMsg.append(format("&e" + cmd.getName() + "&7, ")).setHoverAsTooltip(format("&b" + cmdName + "&7: &e" + cmd.getUsage()), format("&7" + cmd.getDescription())).setClickAsSuggestCmd("/" + cmdName.toLowerCase() + " ").save();
-        return jMsg;
+     * Gets the base component for the command containing hover and click events
+     * @param cmd the command to get the component for
+     * @return the completed component with hover and click actions
+     */
+    public static BaseComponent getClickHelp(Command cmd) {
+        BaseComponent cmdText = new TextComponent(cmd.getName());
+        cmdText.setColor(net.md_5.bungee.api.ChatColor.YELLOW);
+
+        cmdText.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
+                new ComponentBuilder(format("&b" + cmd.getName() + "&7: &e" + cmd.getUsage() + "\n" + "&7" + cmd.getDescription())).create()));
+        cmdText.setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/" + cmd.getName().toLowerCase() + " "));
+        return cmdText;
     }
 }
