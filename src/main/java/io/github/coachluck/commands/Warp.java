@@ -82,7 +82,7 @@ public class Warp implements CommandExecutor, TabCompleter {
             }
             if(hasCooldown(p)) {
                 ChatUtils.msg(p, warpData.getString("messages.cooldown")
-                        .replaceAll("%time%", "" + cooldowns.get(p.getUniqueId()).getTimeRemaining()));
+                        .replaceAll("%time%", Integer.toString(cooldowns.get(p.getUniqueId()).getTimeRemaining())));
                 return true;
             }
 
