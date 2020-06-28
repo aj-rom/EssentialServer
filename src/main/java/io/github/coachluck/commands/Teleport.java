@@ -1,6 +1,6 @@
 /*
  *     File: Teleport.java
- *     Last Modified: 6/28/20, 3:49 PM
+ *     Last Modified: 6/28/20, 4:10 PM
  *     Project: EssentialServer
  *     Copyright (C) 2020 CoachL_ck
  *
@@ -23,6 +23,7 @@ package io.github.coachluck.commands;
 import io.github.coachluck.EssentialServer;
 import io.github.coachluck.utils.ChatUtils;
 import io.github.coachluck.utils.Cooldown;
+import io.github.coachluck.utils.Util;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -42,10 +43,7 @@ public class Teleport implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        final String tpOtherMsg = plugin.getConfig().getString("teleport.others-message");
-        final String tpMsg = plugin.getConfig().getString("teleport.message");
-        final String offlinePlayer = plugin.getConfig().getString("offline-player");
-        final boolean enableMsg = plugin.getConfig().getBoolean("teleport.message-enable");
+        String offlinePlayer = plugin.getConfig().getString("offline-player");
 
         if(!(sender instanceof Player)) {
             ChatUtils.logMsg("&cYou must be a player to use this command!");
@@ -68,12 +66,16 @@ public class Teleport implements CommandExecutor {
                 ChatUtils.msg(player, plugin.getConfig().getString("teleport.self"));
                 return true;
             }
-            if(tPTask(player, target, player) && enableMsg) {
-                ChatUtils.msg(player, tpMsg.replaceAll("%player%", target.getDisplayName()));
+            if(hasCooldown(player)) {
+                ChatUtils.msg(player, plugin.getConfig().getString("teleport.cooldown-message")
+                        .replaceAll("%time%", Integer.toString(cooldowns.get(player.getUniqueId()).getTimeRemaining())));
                 return true;
             }
+
+            tPTask(player, target);
+            return true;
         }
-        else if(args.length == 2) {
+        if(args.length == 2) {
             if(!player.hasPermission("essentialserver.tp.others")) {
                 sendUsage(player);
                 return true;
@@ -90,20 +92,20 @@ public class Teleport implements CommandExecutor {
                 return true;
             }
             if(playerToSend.getDisplayName().equalsIgnoreCase(target.getDisplayName())) {
-                ChatUtils.msg(sender, "&cDid you really mean to do that? Try again...");
+                ChatUtils.msg(player, "&cDid you really mean to do that? Try again...");
+                return true;
+            }
+            if(hasCooldown(player)) {
+                ChatUtils.msg(player, plugin.getConfig().getString("teleport.cooldown-message")
+                        .replaceAll("%time%", Integer.toString(cooldowns.get(player.getUniqueId()).getTimeRemaining())));
                 return true;
             }
 
-            if(tPTask(playerToSend, target, player) && enableMsg) {
-                ChatUtils.msg(sender, tpOtherMsg
-                        .replaceAll("%player1%", playerToSend.getDisplayName())
-                        .replaceAll("%player2%", target.getDisplayName()));
-                return true;
-            }
-        } else {
-            sendUsage(player);
+            tPTask(playerToSend, target, player);
             return true;
         }
+
+        sendUsage(player);
         return true;
     }
 
@@ -120,30 +122,49 @@ public class Teleport implements CommandExecutor {
     }
 
     /**
-     * Teleport a player
+     * Check whether or not they have Teleport cooldown
+     * @param player player to check
+     * @return true if in cooldown, false if not
+     */
+    private boolean hasCooldown(Player player) {
+        UUID uuid = player.getUniqueId();
+        if(player.hasPermission("essentialserver.tp.bypass"))
+            return false;
+
+        return Util.checkCooldown(uuid, cooldowns);
+    }
+
+
+    /**
+     * Teleport one player to another
+     * @param playerToSend the player to teleport
+     * @param target the player to teleport to
+     */
+    private void tPTask(Player playerToSend, Player target) {
+        final boolean enableMsg = plugin.getConfig().getBoolean("teleport.message-enable");
+        final String tpMsg = plugin.getConfig().getString("teleport.message");
+        if(enableMsg) {
+            ChatUtils.msg(playerToSend, tpMsg.replaceAll("%player%", target.getDisplayName()));
+        }
+        playerToSend.teleport(target.getLocation());
+
+    }
+
+    /**
+     * Teleport a player to another
      * @param playerToSend the player who is teleporting
      * @param target the player to teleport TO
      * @param sender the person initiating the Teleport
      */
-    private boolean tPTask(Player playerToSend, Player target, Player sender) {
-        if(sender.hasPermission("essentialserver.tp.bypass")) {
-            playerToSend.teleport(target.getLocation());
-            return true;
+    private void tPTask(Player playerToSend, Player target, Player sender) {
+        final boolean enableMsg = plugin.getConfig().getBoolean("teleport.message-enable");
+        final String tpOtherMsg = plugin.getConfig().getString("teleport.others-message");
+        if(enableMsg) {
+            ChatUtils.msg(sender, tpOtherMsg
+                    .replaceAll("%player1%", playerToSend.getDisplayName())
+                    .replaceAll("%player2%", target.getDisplayName()));
         }
-
-        UUID sUUID = sender.getUniqueId();
-        if(cooldowns.containsKey(sUUID)) {
-            if(cooldowns.get(sUUID).getTimeRemaining() > 0) {
-                int rem = cooldowns.get(sUUID).getTimeRemaining();
-                ChatUtils.msg(sender, plugin.getConfig().getString("teleport.cooldown-message")
-                        .replaceAll("%time%", Integer.toString(rem)));
-                return false;
-            }
-            cooldowns.remove(sUUID);
-        }
-        playerToSend.teleport(target.getLocation());
-        cooldowns.put(sUUID, new Cooldown(Cooldown.CooldownType.TELEPORT));
-        return true;
+        tPTask(playerToSend, target);
     }
 
 }
