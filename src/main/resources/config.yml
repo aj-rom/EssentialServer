@@ -1,3 +1,6 @@
+# Whether or not to check for updates (true | false)
+check-updates: true
+
 # The message to send the player when they do not have permission
 permission-message: '&cYou do not have permission to use this command!'
 
@@ -27,6 +30,7 @@ spawn:
   yaw: null
   pitch: null
   spawn-message: '&eWhoosh... &6You have respawned!'
+  other-message: '&7You have sent &e%player% &7to the spawn.'
   enable-message: true
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
@@ -70,7 +74,7 @@ heal:
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 teleport:
   cooldown-time: 5
-  cooldown-message: "&cCool-Down: &6%time% seconds &cremaining."
+  cooldown-message: "&7You currently have a &cTeleport Cooldown &7for &e%time% seconds&7."
   self: "&cYou can't teleport to yourself..."
   message: '&7You have &6teleported &7to &b%player%&7!'
   others-message: '&7You have teleported &b%player1% &7to &b%player2%&7!'
