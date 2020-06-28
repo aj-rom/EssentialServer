@@ -1,7 +1,27 @@
+/*
+ *     File: PlayerJoinLeave.java
+ *     Last Modified: 6/28/20, 2:37 PM
+ *     Project: EssentialServer
+ *     Copyright (C) 2020 CoachL_ck
+ *
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ *
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package io.github.coachluck.events;
 
 import io.github.coachluck.EssentialServer;
-import io.github.coachluck.utils.JsonMessage;
+import io.github.coachluck.utils.ChatUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -32,11 +52,7 @@ public class PlayerJoinLeave implements Listener {
         }
         if(enableMsg) e.setJoinMessage(format(joinMsg.replace("%player%", player.getDisplayName())));
         if(plugin.updateMsg && player.isOp()) {
-                JsonMessage message = new JsonMessage()
-                        .append(format("&8[&eEssential Server&8]&c is out of date! &7Get the new version ")).save()
-                        .append(format("&ehere")).setClickAsURL("https://bit.ly/37eMbW5").setHoverAsTooltip(format("&6Click Me")).save()
-                        .append(format("&7!")).save();
-                message.send(player);
+            ChatUtils.sendPluginMessage(player, "&eA new update has been downloaded. Please restart to get the newest version.");
         }
     }
 

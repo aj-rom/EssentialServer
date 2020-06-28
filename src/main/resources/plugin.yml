@@ -1,6 +1,6 @@
 name: EssentialServer
 api-version: 1.15
-version: 1.2.7
+version: 1.2.8
 main: io.github.coachluck.EssentialServer
 load: POSTWORLD
 commands:
@@ -42,7 +42,7 @@ commands:
     description: "Teleports you to the specified player or teleports player1 to player2"
     usage: /teleport [player1] <player2>
     aliases: [tp]
-    permission: essentialserver.teleport
+    permission: essentialserver.tp
   burn:
     description: "Burns you or the specified player."
     aliases: [burnplayer, b]

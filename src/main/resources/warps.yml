@@ -1,0 +1,36 @@
+# This holds all information for the warps
+# 'warps' will contain all of the current warps on the server
+# 'warps.<warpname>.name - sets the display name for the warp
+# Permisison: 'warps.bypass-cooldown' - disable warp cooldowns
+cooldown: 5
+default-sound: BLOCK_PORTAL_TRAVEL
+messages:
+  default-warp: '&7You have warped to &e%name%'
+  cooldown: "&7You currently have a &cWarp Cooldown &7for &e%time% seconds&7."
+  warp-list-header:
+    - ''
+    - '&b&m                                  &r&7[ &c&lWarps&r &7]&b&m                                 '
+    - '&7Click on any warp to &eteleport there.'
+    - ''
+  warp-list-color: '&e'
+  warp-list-separator: '&7, '
+  warp-list-footer:
+    - ''
+  warp-not-found: '&7Could not find warp&f: &c%warp%'
+  no-perm-for-warp: '&7You do not have permission to warp to &c%warp%'
+  warp-already-exists: '&c%warp% &7already exists! Try using a different name.'
+  create-warp: '&7You have &acreated &7a new warp &e%warp%'
+warps:
+  example:
+    name: '&cExample'
+    on-warp-message: '&7Successfully warped to %name% &7this is default set to
+      the spawn location.'
+    on-warp-sound: BLOCK_PORTAL_TRAVEL
+    location:
+      ==: org.bukkit.Location
+      world: world
+      x: -144.0
+      y: 66.0
+      z: 224.0
+      pitch: 0.0
+      yaw: 0.0
