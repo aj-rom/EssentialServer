@@ -16,50 +16,50 @@ commands:
   clear:
     description: "Clears your inventory or the player specified."
     aliases: [ci, clearinv, clearinventory]
-    usage: /clear [player]
+    usage: /clear &c[&7player&c]
     permission: essentialserver.clear
   feed:
     description: "Fill your tummy with some invisible food."
-    usage: /feed [player]
+    usage: /feed &c[&7player&c]
     permission: essentialserver.feed
   god:
     description: "Makes you or the player completely invincible."
-    usage: /god [player]
+    usage: /god &c[&7player&c]
     permission: essentialserver.god
   heal:
     description: "Heal yourself or the player specified."
-    usage: /heal [player]
+    usage: /heal &c[&7player&c]
     permission: essentialserver.heal
   kill:
     description: "Kill yourself or the player specified."
-    usage: /kill [player]
+    usage: /kill &c[&7player&c]
     permission: essentialserver.kill
   fly:
     description: "Makes you or the player take flight."
-    usage: /fly [player]
+    usage: /fly &c[&7player&c]
     permission: essentialserver.fly
   teleport:
     description: "Teleports you to the specified player or teleports player1 to player2"
-    usage: /teleport [player1] <player2>
+    usage: /teleport &b<&7player1&b> &c[&7player2&c]
     aliases: [tp]
     permission: essentialserver.tp
   burn:
     description: "Burns you or the specified player."
     aliases: [burnplayer, b]
-    usage: /burn [player]
+    usage: /burn &c[&7player&c]
     permission: essentialserver.burn
   smite:
     description: "May the power of thor be bestowed upon you."
     aliases: [thor, lightning]
-    usage: /smite [player]
+    usage: /smite &c[&7player&c]
     permission: essentialserver.smite
   spawn:
     description: "Teleports you or the player to spawn."
-    usage: /spawn [player]
+    usage: /spawn &c[&7player&c]
     permission: essentialserver.spawn
   vanish:
     description: "Become invisible to everyone on the server!"
-    usage: /vanish [player]
+    usage: /vanish &c[&7player&c]
     permission: essentialserver.vanish
   setspawn:
     description: "Set the spawn for the server."
@@ -67,29 +67,29 @@ commands:
     permission: essentialserver.setspawn
   gamemode:
     description: "Changes your gamemode or the player."
-    usage: /gamemode <mode> [player]
+    usage: /gamemode &b<&7mode&b> &c[&7player&c]
     permission: essentialserver.gamemode
     aliases: [gm]
   invsee:
     description: "Allows you to look inside of players inventory"
-    usage: /invsee <player>
+    usage: /invsee &b<&7player&b>
     permission: essentialserver.invsee
   warp:
     description: "Teleport to the specified warp"
-    usage: /warp <warp>
+    usage: /warp &b<&7warp&b>
     permission: essentialserver.warp
     aliases:
       - warps
   setwarp:
     description: "Add your current location as a warp"
-    usage: /setwarp <name>
+    usage: /setwarp &b<&7name&b>
     permission: essentialserver.setwarp
     aliases:
       - addwarp
       - newwarp
   delwarp:
     description: "Delete a warp"
-    usage: /delwarp <warp>
+    usage: /delwarp &b<&7warp&b>
     permission: essentialserver.delwarp
     aliases:
       - deletewarp

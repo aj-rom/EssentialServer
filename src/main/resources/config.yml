@@ -1,4 +1,6 @@
-# Whether or not to check for updates (true | false)
+#  EssentialServer by CoachL_ck
+#  For help on configuration or in general, please check the wiki.
+#  Link: https://github.com/CoachLuck/EssentialServer/wiki
 check-updates: true
 
 # The message to send the player when they do not have permission
@@ -12,9 +14,10 @@ offline-player: "&c%player% &7is currently offline!"
 # enable-message, (True) enables command messages,  #
 # (False) disable command messages                  #
 # # # # # # # # # # # # # # # # # # # # # # # # # # #
-join-message: '&bWelcome, &6%player%&b, to the server!'
-leave-message: '&bAdios, &6%player%&b, see you soon!'
-enable-message: true
+Join-Leave:
+  join-message: '&7Welcome, &c%player%&7, to the server!'
+  leave-message: '&7Adios, &c%player%&7, see you soon!'
+  enable-message: true
 
 # # # # # # # # # # # # # # # # # # # # # # # # #
 #                Spawn Settings                 #
