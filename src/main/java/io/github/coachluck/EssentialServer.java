@@ -1,69 +1,60 @@
+/*
+ *     File: EssentialServer.java
+ *     Last Modified: 6/28/20, 2:45 PM
+ *     Project: EssentialServer
+ *     Copyright (C) 2020 CoachL_ck
+ *
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ *
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package io.github.coachluck;
 
-import io.github.coachluck.commands.Burn;
-import io.github.coachluck.commands.Fly;
-import io.github.coachluck.commands.Help;
-import io.github.coachluck.commands.Spawn;
-import io.github.coachluck.commands.God;
-import io.github.coachluck.commands.InvSee;
-import io.github.coachluck.commands.IGameMode;
-import io.github.coachluck.commands.SetWarp;
-import io.github.coachluck.commands.DelWarp;
-import io.github.coachluck.commands.Warp;
-import io.github.coachluck.commands.Teleport;
-import io.github.coachluck.commands.Vanish;
-import io.github.coachluck.commands.Kill;
-import io.github.coachluck.commands.Feed;
-import io.github.coachluck.commands.Smite;
-import io.github.coachluck.commands.Heal;
-import io.github.coachluck.commands.Clear;
+import io.github.coachluck.commands.*;
 import io.github.coachluck.events.PlayerJoinLeave;
 import io.github.coachluck.tabcompleters.PlayerTabList;
 import io.github.coachluck.tabcompleters.TabList;
 import io.github.coachluck.utils.ChatUtils;
-import io.github.coachluck.utils.Updater;
+import io.github.coachluck.utils.UpdateChecker;
 import io.github.coachluck.warps.WarpFile;
 import io.github.coachluck.warps.WarpHolder;
+import lombok.Getter;
+import lombok.Setter;
 import org.bukkit.Bukkit;
-import org.bukkit.Sound;
-import org.bukkit.World;
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.UUID;
-import java.util.logging.Level;
 
 public class EssentialServer extends JavaPlugin {
     public boolean updateMsg = false;
-    private String pMsg = ChatUtils.format(this.getConfig().getString("permission-message"));
+    public final String pMsg = ChatUtils.format(this.getConfig().getString("permission-message"));
     public ArrayList<UUID> vanish_players = new ArrayList<>();
 
-
     public HashMap<String, WarpHolder> warpMap = new HashMap<>();
-    public File warpDataFile;
-    public YamlConfiguration warpData;
-    public WarpFile warpFile;
-
-    @Override
-    public void onLoad() {
-        enableConfig();
-    }
+    @Getter @Setter WarpFile warpFile;
 
     @Override
     public void onEnable() {
-        Updater update = new Updater(this, this.getFile());
-        checkUpdate(update);
-        loadWarps();
+        createDirectories();
         reloadWarpsMap();
         registerEvents();
         enableCommands();
         enableCommandP();
         enableCommandTabs();
+        checkUpdate();
     }
 
     @Override
@@ -75,10 +66,6 @@ public class EssentialServer extends JavaPlugin {
     private void registerEvents() {
         PluginManager pm = getServer().getPluginManager();
         pm.registerEvents(new PlayerJoinLeave(this), this);
-    }
-    private void enableConfig() {
-        getConfig().options().copyDefaults(true);
-        saveDefaultConfig();
     }
 
     private void enableCommands() {
@@ -103,6 +90,9 @@ public class EssentialServer extends JavaPlugin {
         this.getCommand("delwarp").setExecutor(new DelWarp(this));
     }
 
+    /**
+     * Sets the permission message
+     */
     private void enableCommandP() {
         this.getServer().getPluginCommand("es").setPermissionMessage(pMsg);
         this.getServer().getPluginCommand("esHelp").setPermissionMessage(pMsg);
@@ -125,6 +115,9 @@ public class EssentialServer extends JavaPlugin {
         this.getServer().getPluginCommand("delwarp").setPermissionMessage(pMsg);
     }
 
+    /**
+     * Enables command Tab Completion
+     */
     private void enableCommandTabs() {
         this.getCommand("gameMode").setTabCompleter(new TabList(this));
         this.getCommand("esHelp").setTabCompleter(new TabList(this));
@@ -143,78 +136,46 @@ public class EssentialServer extends JavaPlugin {
         this.getCommand("Kill").setTabCompleter(new PlayerTabList(this));
     }
 
-    private void checkUpdate(Updater update) {
-        Updater.UpdateResult up = update.getResult();
-        if (Updater.UpdateResult.DISABLED != up) {
-            if (up == Updater.UpdateResult.UPDATE_AVAILABLE) {
-                updateMsg = true;
-                ChatUtils.logMsg("&bThere is a new update available! &ehttps://bit.ly/37eMbW5");
-                ChatUtils.logMsg("&bYou can enable automatic updates in the &e'auto-update.yml&b' by changing '&eforce-download&b' to true");
-            }
-            else if (up == Updater.UpdateResult.SUCCESS) {
-                ChatUtils.logMsg("&bSuccessfully installed the newest version:&e " + update.getLatestName());
-                ChatUtils.logMsg("&bPlease reload the server for this to take effect.");
-            }
-            else if (up == Updater.UpdateResult.NO_UPDATE) {
+    /**
+     * Checks for plugin updates
+     */
+    private void checkUpdate() {
+        if(!getConfig().getBoolean("check-updates"))
+            return;
+
+        new UpdateChecker(this, 71299).getVersion(version -> {
+            int old = Integer.parseInt(this.getDescription().getVersion().replaceAll("\\.", ""));
+            int newVer = Integer.parseInt(version.replaceAll("\\.", ""));
+            if (old >= newVer) {
                 ChatUtils.logMsg("&bYou are running the latest version.");
+                return;
             }
-        }
+
+            ChatUtils.logMsg("&aThere is a new update available.");
+        });
     }
 
-    private void loadWarps() {
-        if(!getDataFolder().exists() && !getDataFolder().mkdir()) {
-                ChatUtils.logMsg("&cError getting data folder.");
-        }
-        warpDataFile = new File(getDataFolder(), "warps.yml");
-        if(!warpDataFile.exists()) {
-            try {
-                if(!warpDataFile.createNewFile()) {
-                    ChatUtils.logMsg("&cError creating &ewarps.yml");
-                }
-                warpData = YamlConfiguration.loadConfiguration(warpDataFile);
-                warpData.options().header("This holds all information for the warps" +
-                        "\n'warps' will contain all of the current warps on the server" +
-                        "\n'warps.<warpname>.name - sets the display name for the warp");
-                warpData.set("cooldown", 5);
-                warpData.createSection("messages");
-                ArrayList<String> header = new ArrayList<>();
-                header.add("");
-                header.add("&b&m                                  &r&7[ &c&lWarps&r &7]&b&m                                 ");
-                header.add("&7Click on any warp to &eteleport there.");
-                header.add("");
-                warpData.set("messages.warp-list-header", header);
-                warpData.set("messages.warp-list-color", "&e");
-                warpData.set("messages.warp-list-separator", "&7, ");
-                ArrayList<String> footer = new ArrayList<>();
-                footer.add("");
-                warpData.set("messages.warp-list-footer", footer);
-                warpData.set("messages.warp-not-found", "&7Could not find warp&f: &c%warp%");
-                warpData.set("messages.no-perm-for-warp", "&7You do not have permission to warp to &c%warp%");
-                warpData.set("messages.warp-already-exists", "&c%warp% &7already exists! Try using a different name.");
-                warpData.set("messages.create-warp", "You have created a new warp &e%warp%");
-                warpData.createSection("warps");
-                // Add the example warp
-                warpData.createSection("warps.example");
-                warpData.set("warps.example.on-warp-message", "&7Successfully warped to &eExample &7this is default set to the spawn location.");
-                warpData.set("warps.example.on-warp-sound", Sound.BLOCK_PORTAL_TRAVEL.toString());
-                warpData.createSection("warps.example.location");
-                final World world = Bukkit.getWorlds().get(0);
-                warpData.set("warps.example.location", world.getSpawnLocation());
-                warpData.save(warpDataFile);
-            } catch(IOException e) {
-                getLogger().log(Level.SEVERE, "Error reading/creating warps.yml file");
-            }
-        } else {
-            warpData = YamlConfiguration.loadConfiguration(warpDataFile);
-        }
-        warpFile = new WarpFile(this);
+    /**
+     * Creates the configuration and warps files
+     */
+    private void createDirectories() {
+        getConfig().options().copyDefaults(true);
+        saveDefaultConfig();
+        warpFile = new WarpFile();
     }
 
+    /**
+     * Reloads the active warp list for the server
+     */
     public void reloadWarpsMap() {
         Bukkit.getScheduler().runTaskAsynchronously(this, () -> {
             if(!warpMap.isEmpty()) warpMap.clear();
-            for(String s : warpFile.getAllWarps()) {
-                warpMap.put(s, new WarpHolder(warpFile.getLocation(s), warpFile.getSound(s), warpFile.getWarpMessage(s)));
+            for(String s : warpFile.getAllWarpKeys()) {
+                warpMap.put(s, new WarpHolder(
+                                warpFile.getLocation(s),
+                                warpFile.getSound(s),
+                                warpFile.getWarpMessage(s),
+                                warpFile.getDisplayName(s)));
             }
         });
     }

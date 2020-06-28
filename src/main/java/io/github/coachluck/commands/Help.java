@@ -1,14 +1,34 @@
+/*
+ *     File: Help.java
+ *     Last Modified: 6/28/20, 12:38 PM
+ *     Project: EssentialServer
+ *     Copyright (C) 2020 CoachL_ck
+ *
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ *
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package io.github.coachluck.commands;
 
 import io.github.coachluck.EssentialServer;
 import io.github.coachluck.utils.ChatUtils;
-import io.github.coachluck.utils.JsonMessage;
 import io.github.coachluck.warps.WarpFile;
+import net.md_5.bungee.api.ChatColor;
+import net.md_5.bungee.api.chat.*;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.PluginCommandYamlParser;
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 
 import java.util.List;
@@ -27,17 +47,19 @@ public class Help implements CommandExecutor {
         else if(cmd.getName().equalsIgnoreCase("es") && sender.hasPermission("essentialserver.info")) {
             if(args.length != 1) {
                 if (sender instanceof Player) {
-                    JsonMessage message = new JsonMessage()
-                            .append(ChatUtils.format("&8[&bEssential Server&8]&e v" + plugin.getDescription().getVersion() + " &7created by ")).save()
-                            .append(ChatUtils.format("&bCoachL_ck")).setClickAsURL("https://bit.ly/37eMbW5").setHoverAsTooltip(ChatUtils.format("&eClick Me")).save()
-                            .append(ChatUtils.format("&7!")).save();
-                    message.send((Player) sender);
+                    ComponentBuilder msg = new ComponentBuilder(ChatUtils.format("&8[&bEssential Server&8]&e v" + plugin.getDescription().getVersion() + " &7created by "));
+                    BaseComponent info = new TextComponent(ChatUtils.format("&bCoachL_ck"));
+                    info.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://bit.ly/346mO6j"));
+                    info.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(ChatUtils.format("&eClick Me&7!")).create()));
+                    msg.append(info);
+
+                    sender.spigot().sendMessage(msg.create());
                 } else ChatUtils.logMsg("&ev" + plugin.getDescription().getVersion() + " &7created by &bCoachL_ck");
             } else  {
                 if(args[0].equalsIgnoreCase("reload") && sender.hasPermission("essentialserver.reload")) {
                     plugin.reloadConfig();
-                    plugin.warpData = YamlConfiguration.loadConfiguration(plugin.warpDataFile);
-                    plugin.warpFile = new WarpFile(plugin);
+                    plugin.setWarpFile(new WarpFile());
+                    plugin.reloadWarpsMap();
                     ChatUtils.msg(sender, "&aSuccessfully configuration files & warps!");
                 }
             }
@@ -55,19 +77,25 @@ public class Help implements CommandExecutor {
             List<Command> cmdList = PluginCommandYamlParser.parse(plugin);
             p.sendMessage("");
             p.sendMessage(ChatUtils.format("&b&m                                   &r&7[ &e&lHelp&r &7]&b&m                                  "));
-            JsonMessage info = new JsonMessage()
-                    .append(ChatUtils.format("&7Hover over &ecommands &7for more info, &6click &7to run the command"))
-                    .setHoverAsTooltip(ChatUtils.format("&7Usage with &b<> &7 is required. &c[] &7is optional")).save();
-            info.send(p);
+            TextComponent header = new TextComponent(ChatUtils.format("&7Hover over &ecommands &7for more info, &6click &7to run the command"));
+            header.setColor(ChatColor.GRAY);
+            header.setHoverEvent(
+                    new HoverEvent(HoverEvent.Action.SHOW_TEXT,
+                            new ComponentBuilder(
+                                    ChatUtils.format("&7Usage with &b<> &7 is required. &c[] &7is optional"))
+                                    .create()));
+            p.spigot().sendMessage(header);
             p.sendMessage("");
-            JsonMessage main = new JsonMessage();
-            for (Command cmd : cmdList) {
-                assert cmd.getPermission() != null;
-                if (p.hasPermission(cmd.getPermission())) {
-                    ChatUtils.getClickHelp(main, cmd);
+
+            ComponentBuilder main = new ComponentBuilder();
+            for(Command cmd : cmdList) {
+                if(p.hasPermission(cmd.getPermission())) {
+                    main.append(ChatUtils.getClickHelp(cmd));
+                    main.append(", ");
                 }
             }
-            main.send(p);
+
+            p.spigot().sendMessage(main.create());
             p.sendMessage("");
             p.sendMessage(ChatUtils.format("&b&m                           &r&7[ &eEssential Server&r &7]&b&m                           "));
             p.sendMessage("");
