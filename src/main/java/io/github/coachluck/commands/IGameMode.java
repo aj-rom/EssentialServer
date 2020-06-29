@@ -1,6 +1,6 @@
 /*
  *     File: IGameMode.java
- *     Last Modified: 6/28/20, 5:52 PM
+ *     Last Modified: 6/28/20, 8:55 PM
  *     Project: EssentialServer
  *     Copyright (C) 2020 CoachL_ck
  *
@@ -32,6 +32,7 @@ import org.bukkit.entity.Player;
 
 
 public class IGameMode implements CommandExecutor {
+
     private final EssentialServer plugin;
     public IGameMode(EssentialServer plugin) {
         this.plugin = plugin;
@@ -43,34 +44,37 @@ public class IGameMode implements CommandExecutor {
         String gOtherMsg = plugin.getConfig().getString("gamemode.message-others");
         String offlinePlayer = plugin.getConfig().getString("offline-player");
 
-        if(sender instanceof Player && sender.hasPermission("essentialserver.gamemode")) {
+        if(sender instanceof Player) {
             Player p = (Player) sender;
-            if (args.length == 0) {
-                ChatUtils.msg(p, "&cPlease specify a gamemode! &e/gamemode &c<&7mode&c>&c.");
-                return true;
-            }
-            else if (args.length == 1) {
-                changeGM(args[0], p, sender);
-                return true;
-            }
-            else if (args.length == 2) {
-                if(!sender.hasPermission("essentialserver.gamemode.others")) {
-                    ChatUtils.msg(sender, "&cIncorrect Syntax: &e/gamemode &7[&bmode&7]");
+            switch(args.length) {
+                case 0:
+                    ChatUtils.msg(p, "&cPlease specify a gamemode! &e/gamemode &c<&7mode&c>&c.");
                     return true;
-                }
-                Player target = Bukkit.getPlayerExact(args[1]);
-                if(target == null) {
-                    ChatUtils.msg(sender, offlinePlayer);
+                case 1:
+                    changeGM(args[0], p, sender);
                     return true;
-                }
-                if (enableMsg && !p.getDisplayName().equalsIgnoreCase(target.getDisplayName())) {
-                    ChatUtils.msg(sender, gOtherMsg
-                            .replaceAll("%player%", target.getDisplayName())
-                            .replaceAll("%mode%", args[0].toLowerCase()));
-                }
-                changeGM(args[0], target, sender);
-                return true;
-            } else badUse(sender);
+                case 2:
+                    if(!sender.hasPermission("essentialserver.gamemode.others")) {
+                        ChatUtils.msg(sender, "&cIncorrect Syntax: &e/gamemode &7[&bmode&7]");
+                        return true;
+                    }
+
+                    Player target = Bukkit.getPlayerExact(args[1]);
+                    if(target == null) {
+                        ChatUtils.msg(sender, offlinePlayer);
+                        return true;
+                    }
+                    if (enableMsg && !p.getDisplayName().equalsIgnoreCase(target.getDisplayName())) {
+                        ChatUtils.msg(sender, gOtherMsg
+                                .replaceAll("%player%", target.getDisplayName())
+                                .replaceAll("%mode%", args[0].toLowerCase()));
+                    }
+                    changeGM(args[0], target, sender);
+                    return true;
+                default:
+                    badUse(sender);
+                    return true;
+            }
         }
         else if (sender instanceof ConsoleCommandSender) {
             if(args.length != 2) {
@@ -102,20 +106,21 @@ public class IGameMode implements CommandExecutor {
      * @param s the player changing the gamemode
      */
     private void changeGM(String GAMEMODE, Player target, CommandSender s) {
+        GAMEMODE = GAMEMODE.toLowerCase();
         boolean enableMsg = plugin.getConfig().getBoolean("gamemode.message-enable");
         String gMsg = plugin.getConfig().getString("gamemode.message");
         if (target != null) {
-            if (GAMEMODE.equalsIgnoreCase("survival") || GAMEMODE.equalsIgnoreCase("0")) {
+            if (GAMEMODE.startsWith("s") || GAMEMODE.equalsIgnoreCase("0")) {
                 target.setGameMode(GameMode.SURVIVAL);
                 if (enableMsg)
                     ChatUtils.msg(target, gMsg.replaceAll("%mode%", "Survival"));
             }
-            else if (GAMEMODE.equalsIgnoreCase("creative") || GAMEMODE.equalsIgnoreCase("1")) {
+            else if (GAMEMODE.startsWith("c") || GAMEMODE.equalsIgnoreCase("1")) {
                 target.setGameMode(GameMode.CREATIVE);
                 if (enableMsg)
                     ChatUtils.msg(target, gMsg.replaceAll("%mode%", "Creative"));
             }
-            else if (GAMEMODE.equalsIgnoreCase("adventure") || GAMEMODE.equalsIgnoreCase("2")) {
+            else if (GAMEMODE.startsWith("a") || GAMEMODE.equalsIgnoreCase("2")) {
                 target.setGameMode(GameMode.ADVENTURE);
                 if (enableMsg)
                     ChatUtils.msg(target, gMsg.replaceAll("%mode%", "Adventure"));
@@ -128,8 +133,8 @@ public class IGameMode implements CommandExecutor {
      * @param s the sender of the command
      */
     private void badUse(CommandSender s) {
-        if(s.hasPermission("essentialserver.tp.others")) ChatUtils.msg(s, "&cIncorrect usage! Try &a/gamemode [&bmode&a] <&bplayer&a>");
-        else ChatUtils.msg(s, "&cIncorrect usage! Try &a/gamemode [&bmode&a]");
+        if(s.hasPermission("essentialserver.tp.others")) ChatUtils.msg(s, "&cIncorrect usage! &7Try &e/gamemode &b<&7mode&b> &c[&7player&7]");
+        else ChatUtils.msg(s, "&cIncorrect usage! Try &a/gamemode &b[&7mode&b]");
     }
 
 }
