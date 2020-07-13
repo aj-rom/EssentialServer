@@ -17,7 +17,7 @@ offline-player: "&c%player% &7is currently offline!"
 Join-Leave:
   join-message: '&7Welcome, &c%player%&7, to the server!'
   leave-message: '&7Adios, &c%player%&7, see you soon!'
-  enable-message: true
+  enabled: true
 
 # # # # # # # # # # # # # # # # # # # # # # # # #
 #                Spawn Settings                 #
@@ -32,7 +32,7 @@ spawn:
   z: null
   yaw: null
   pitch: null
-  spawn-message: '&eWhoosh... &6You have respawned!'
+  spawn-message: '&eWhoosh... &7You have respawned!'
   other-message: '&7You have sent &e%player% &7to the spawn.'
   enable-message: true
 
@@ -43,7 +43,7 @@ spawn:
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 gamemode:
   message: '&7Gamemode has been switched to &b%mode%&7.'
-  message-others: '&7You have changed the game mode of &b%player% &7to &e%mode%.'
+  message-others: '&7You have changed the game mode of &e%player% &7to &b%mode%.'
   message-enable: true
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
@@ -53,8 +53,8 @@ gamemode:
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 feed:
   amount: 20
-  message: '&bYou have been &a&lfed&r&b!'
-  other-message: '&bYou have &a&lfed &6&l%player%&r&b!'
+  message: '&7You have been &a&lfed&r&7!'
+  other-message: '&7You have &a&lfed &e&l%player%&r&7!'
   message-enable: true
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
@@ -64,8 +64,8 @@ feed:
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 heal:
   amount: 20
-  message: '&bYou have been &a&lhealed&r&b!'
-  other-message: '&bYou have healed &6&l%player%&r&b!'
+  message: '&7You have been &a&lhealed&r&7!'
+  other-message: '&7You have healed &e&l%player%&r&7!'
   message-enable: true
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
@@ -79,8 +79,8 @@ teleport:
   cooldown-time: 5
   cooldown-message: "&7You currently have a &cTeleport Cooldown &7for &e%time% seconds&7."
   self: "&cYou can't teleport to yourself..."
-  message: '&7You have &6teleported &7to &b%player%&7!'
-  others-message: '&7You have teleported &b%player1% &7to &b%player2%&7!'
+  message: '&7You have &ateleported &7to &c%player%&7!'
+  others-message: '&7You have teleported &e%player1% &7to &e%player2%&7!'
   message-enable: true
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
@@ -90,9 +90,9 @@ teleport:
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 burn:
   burn-time: 5
-  message: '&cYou have been &4&lset on fire&r&c!'
-  others-message: '&cYou have set &4&l&6&l%player%&r&c on fire!'
-  self-message: '&cYou have set &4&lYourself??&r&c on fire!'
+  message: '&7You have been &c&lset on fire&r&7!'
+  others-message: '&7You have set &c%player%&r&7 on fire!'
+  self-message: '&7You have set &cYourself??&r&7 on fire!'
   message-enable: true
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
@@ -100,37 +100,37 @@ burn:
 # others-message: %player%, the player you are performing the command on  #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 smite:
-  message: '&6You have been &e&lSTRUCK&r &6with &e&nlightning&r&6!'
-  others-message: '&6You have struck &e&l%player%&r&6 with lightning!'
-  self-message: '&6You have struck &e&lYourself??&r&6 with lightning!'
+  message: '&7You have been &e&lSTRUCK&r &7 with &e&nlightning&r&7!'
+  others-message: '&7You have struck &e&l%player%&r&7 with lightning!'
+  self-message: '&7You have struck &e&lYourself??&r&7 with lightning!'
   message-enable: true
 kill:
-  message: '&cYou have been &4&lkilled&r&c!'
-  others-message: '&cYou have &4&lkilled &6&l%player%&r&c!'
-  suicide-message: '&cYou have committed &4&lsuicide&r&c!'
+  message: '&cYou have been &c&lkilled&r&c!'
+  others-message: '&cYou have &c&lkilled &e%player%&r&c!'
+  suicide-message: '&cYou have committed &c&lsuicide&r&c!'
   message-enable: true
 clear:
-  message: '&bYour inventory has been &a&lcleared&r&b!'
-  others-message: '&bYou have &a&lcleared&r&b the inventory of &6&l%player%&r&b!'
+  message: '&7Your inventory has been &a&lcleared&r&7!'
+  others-message: '&7You have &a&lcleared&r&7 the inventory of &e&l%player%&r&7!'
   message-enable: true
 fly:
-  on-message: '&bFlight has been &a&lenabled&r&b!'
-  off-message: '&bFlight has been &c&ldisabled&r&b!'
-  other-on-message: '&bFlight has been &a&lenabled&r&b for &6&l%player%&r&b!'
-  other-off-message: '&bFlight has been &c&ldisabled&r&b for &6&l%player%&r&b!'
+  on-message: '&7Flight has been &a&lenabled&r&7!'
+  off-message: '&7Flight has been &c&ldisabled&r&7!'
+  other-on-message: '&7Flight has been &a&lenabled&r&7 for &e&l%player%&r&7!'
+  other-off-message: '&7Flight has been &c&ldisabled&r&7 for &e&l%player%&r&7!'
   message-enable: true
 god:
-  on-message: '&bGod mode has been &a&lenabled&r&b!'
-  off-message: '&bGod mode has been &c&ldisabled&r&b!'
-  others-on-message: '&bGod mode has been &a&lenabled&r&b for &6&l%player%&r&b!'
-  others-off-message: '&bGod mode has been &c&ldisabled&r&b for &6&l%player%&r&b!'
+  on-message: '&7God mode has been &a&lenabled&r&7!'
+  off-message: '&7God mode has been &c&ldisabled&r&7!'
+  others-on-message: '&7God mode has been &a&lenabled&r&7 for &e&l%player%&r&7!'
+  others-off-message: '&7God mode has been &c&ldisabled&r&7 for &e&l%player%&r&7!'
   message-enable: true
 vanish:
-  on-message: '&bVanish has been &a&lenabled&r&b!'
-  off-message: '&bVanish has been &c&ldisabled&r&b!'
-  other-on-message: '&bVanish has been &a&lenabled&r&b for &6&l%player%&r&b!'
-  other-off-message: '&bVanish has been &c&ldisabled&r&b for &6&l%player%&r&b!'
+  on-message: '&7Vanish has been &a&lenabled&r&7!'
+  off-message: '&7Vanish has been &c&ldisabled&r&7!'
+  other-on-message: '&7Vanish has been &a&lenabled&r&7 for &e&l%player%&r&7!'
+  other-off-message: '&7Vanish has been &c&ldisabled&r&7 for &e&l%player%&r&7!'
   message-enable: true
 invsee:
-  message: '&aYou have opened the inventory of &b%player%&a!'
+  message: '&aYou have opened the inventory of &7%player%&a!'
   message-enable: true

@@ -71,17 +71,17 @@ commands:
     permission: essentialserver.gamemode
     aliases: [gm]
   invsee:
-    description: "Allows you to look inside of players inventory"
+    description: "Allows you to look inside of players inventory."
     usage: /invsee &b<&7player&b>
     permission: essentialserver.invsee
   warp:
-    description: "Teleport to the specified warp"
+    description: "Teleport to the specified warp."
     usage: /warp &b<&7warp&b>
     permission: essentialserver.warp
     aliases:
       - warps
   setwarp:
-    description: "Add your current location as a warp"
+    description: "Add your current location as a warp."
     usage: /setwarp &b<&7name&b>
     permission: essentialserver.setwarp
     aliases:
@@ -98,7 +98,7 @@ permissions:
   essentialserver.*:
     description: "Give access to all Essential Server commands"
     children:
-      essentialserver.es: true
+      essentialserver.info: true
       essentialserver.gamemode: true
       essentialserver.gamemode.others: true
       essentialserver.help: true
@@ -129,6 +129,9 @@ permissions:
       essentialserver.warp: true
       essentialserver.setwarp: true
       essentialserver.delwarp: true
+      essentialserver.warp.*: true
+      essentialserver.tp.bypass-cooldown: true
+      essentialserver.warp.bypass-cooldown: true
 
   essentialserver.info:
     description: "Display author information"

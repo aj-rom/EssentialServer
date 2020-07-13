@@ -1,7 +1,8 @@
 # This holds all information for the warps
 # 'warps' will contain all of the current warps on the server
 # 'warps.<warpname>.name - sets the display name for the warp
-# Permisison: 'warps.bypass-cooldown' - disable warp cooldowns
+# Permisison: 'essentialserver.warp.bypass-cooldown' - disable warp cooldowns
+# ``
 cooldown: 5
 default-sound: BLOCK_PORTAL_TRAVEL
 messages:
@@ -9,13 +10,14 @@ messages:
   cooldown: "&7You currently have a &cWarp Cooldown &7for &e%time% seconds&7."
   warp-list-header:
     - ''
-    - '&b&m                                  &r&7[ &c&lWarps&r &7]&b&m                                 '
-    - '&7Click on any warp to &eteleport there.'
+    - '&7&m                                  &r&7[ &c&lWarps&r &7]&7&m                                 '
+    - ' &7Click on any warp to &eteleport there.'
     - ''
   warp-list-color: '&e'
   warp-list-separator: '&7, '
   warp-list-footer:
     - ''
+    - '&7&m                                                                        '
   warp-not-found: '&7Could not find warp&f: &c%warp%'
   no-perm-for-warp: '&7You do not have permission to warp to &c%warp%'
   warp-already-exists: '&c%warp% &7already exists! Try using a different name.'
