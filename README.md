@@ -12,7 +12,7 @@ ___
 -   [x] Spigot
 -   [x] Paper
 -   [ ] Bukkit
--   [ ] ySpigpt
+-   [ ] ySpigot
 -   [ ] TacoSpigot
 -   [ ] Tunity
 -   [ ] Sponge
