@@ -1,6 +1,6 @@
 /*
  *     File: Vanish.java
- *     Last Modified: 4/10/20, 6:49 PM
+ *     Last Modified: 7/13/20, 1:39 AM
  *     Project: EssentialServer
  *     Copyright (C) 2020 CoachL_ck
  *
@@ -48,7 +48,7 @@ public class Vanish implements CommandExecutor {
         enableMsg = plugin.getConfig().getBoolean("vanish.message-enable");
         vanishMsg = plugin.getConfig().getString("vanish.on-message");
         vanishOffMsg = plugin.getConfig().getString("vanish.off-message");
-        String offlinePlayer = plugin.getConfig().getString("offline-player");
+        final String offlinePlayer = plugin.getConfig().getString("offline-player");
 
         if(args.length == 0 && sender.hasPermission("essentialserver.vanish")) {
             if(sender instanceof Player) {

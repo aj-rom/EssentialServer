@@ -1,6 +1,6 @@
 /*
  *     File: Help.java
- *     Last Modified: 6/28/20, 5:59 PM
+ *     Last Modified: 7/13/20, 1:37 AM
  *     Project: EssentialServer
  *     Copyright (C) 2020 CoachL_ck
  *
@@ -32,6 +32,7 @@ import net.md_5.bungee.api.chat.ClickEvent;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.command.PluginCommandYamlParser;
 import org.bukkit.entity.Player;
 
@@ -48,19 +49,29 @@ public class Help implements CommandExecutor {
             sendHelp(sender);
             return true;
         }
-        else if(cmd.getName().equalsIgnoreCase("es") && sender.hasPermission("essentialserver.info")) {
+        else if(cmd.getName().equalsIgnoreCase("es")) {
             if(args.length != 1) {
-                if (sender instanceof Player) {
-                    ComponentBuilder msg = new ComponentBuilder(ChatUtils.format("&8[&cEssential Server&8]&e v" + plugin.getDescription().getVersion() + " &7created by "));
-                    BaseComponent info = new TextComponent(ChatUtils.format("&cCoachL_ck"));
-                    info.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://bit.ly/346mO6j"));
-                    info.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(ChatUtils.format("&eClick Me&7!")).create()));
-                    msg.append(info);
+                if (sender instanceof ConsoleCommandSender) {
+                    ChatUtils.logMsg("&ev" + plugin.getDescription().getVersion() + " &7created by &bCoachL_ck");
+                    return true;
+                }
 
-                    sender.spigot().sendMessage(msg.create());
-                } else ChatUtils.logMsg("&ev" + plugin.getDescription().getVersion() + " &7created by &bCoachL_ck");
-            } else  {
-                if(args[0].equalsIgnoreCase("reload") && sender.hasPermission("essentialserver.reload")) {
+                ComponentBuilder msg = new ComponentBuilder(ChatUtils.format("&8[&cEssential Server&8]&e v" + plugin.getDescription().getVersion() + " &7created by "));
+                BaseComponent info = new TextComponent(ChatUtils.format("&cCoachL_ck"));
+                info.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://bit.ly/346mO6j"));
+                info.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(ChatUtils.format("&eClick Me&7!")).create()));
+                msg.append(info);
+
+                sender.spigot().sendMessage(msg.create());
+                return true;
+
+
+            } else {
+                if(args[0].equalsIgnoreCase("reload")) {
+                    if(!sender.hasPermission("essentialserver.reload")) {
+                        ChatUtils.msg(sender, plugin.pMsg);
+                        return true;
+                    }
                     plugin.reloadConfig();
                     plugin.setWarpFile(new WarpFile());
                     plugin.reloadWarpsMap();

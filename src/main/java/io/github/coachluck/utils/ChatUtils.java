@@ -1,6 +1,6 @@
 /*
  *     File: ChatUtils.java
- *     Last Modified: 6/28/20, 6:04 PM
+ *     Last Modified: 7/13/20, 1:42 AM
  *     Project: EssentialServer
  *     Copyright (C) 2020 CoachL_ck
  *
@@ -20,6 +20,7 @@
 
 package io.github.coachluck.utils;
 
+import io.github.coachluck.EssentialServer;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.chat.ClickEvent;
@@ -103,4 +104,6 @@ public class ChatUtils {
         cmdText.setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/" + cmd.getName().toLowerCase() + " "));
         return cmdText;
     }
+
+
 }

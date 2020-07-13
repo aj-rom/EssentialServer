@@ -1,6 +1,6 @@
 /*
  *     File: God.java
- *     Last Modified: 4/10/20, 6:49 PM
+ *     Last Modified: 7/13/20, 1:48 AM
  *     Project: EssentialServer
  *     Copyright (C) 2020 CoachL_ck
  *
@@ -44,14 +44,23 @@ public class God implements CommandExecutor {
             else ChatUtils.msg(sender, ChatUtils.format("&cYou must be a player to execute this command!"));
         }
         else if (args.length == 1 && sender.hasPermission("essentialserver.god.others")) {
-            try {
             Player target = Bukkit.getPlayerExact(args[0]);
-                godCheck(target);
-                if(enableMsg && !target.getName().equals(sender.getName())) {
-                    if (target.isInvulnerable()) ChatUtils.msg(sender, godOtherMsg.replace("%player%", target.getDisplayName()));
-                    else if (!target.isInvulnerable()) ChatUtils.msg(sender, godOtherOffMsg.replace("%player%", target.getDisplayName()));
+            if(target == null) {
+                ChatUtils.msg(sender, plugin.getOfflinePlayerMessage(args[0]));
+                return true;
+            }
+
+            godCheck(target);
+
+            if(enableMsg && !target.getName().equals(sender.getName())) {
+                if (target.isInvulnerable()) {
+                    ChatUtils.msg(sender, godOtherMsg.replace("%player%", target.getDisplayName()));
+                    return true;
                 }
-            } catch (NullPointerException e) { ChatUtils.msg(sender, "&cThe specified player could not be found"); }
+
+                ChatUtils.msg(sender, godOtherOffMsg.replace("%player%", target.getDisplayName()));
+                return true;
+            }
         }
         else if (args.length > 1) ChatUtils.msg(sender, "&cToo many arguments! Try /god <player> or /god.");
         return true;

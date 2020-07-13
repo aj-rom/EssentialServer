@@ -1,6 +1,6 @@
 /*
  *     File: PlayerJoinLeave.java
- *     Last Modified: 6/28/20, 5:48 PM
+ *     Last Modified: 7/13/20, 1:13 AM
  *     Project: EssentialServer
  *     Copyright (C) 2020 CoachL_ck
  *
@@ -34,15 +34,13 @@ import static io.github.coachluck.utils.ChatUtils.format;
 public class PlayerJoinLeave implements Listener {
     private final EssentialServer plugin;
 
-    private boolean enableMsg;
-
     public PlayerJoinLeave(EssentialServer plugin) {
         this.plugin = plugin;
     }
 
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent e) {
-        enableMsg = plugin.getConfig().getBoolean("Join-Leave.enable-message");
+        final boolean enableMsg = plugin.getConfig().getBoolean("Join-Leave.enabled");
         String joinMsg = plugin.getConfig().getString("Join-Leave.join-message");
         Player player = e.getPlayer();
         if(!plugin.vanish_players.isEmpty()) {
@@ -50,17 +48,23 @@ public class PlayerJoinLeave implements Listener {
                 player.hidePlayer(plugin, Bukkit.getPlayer(plugin.vanish_players.get(i)));
             }
         }
-        if(enableMsg) e.setJoinMessage(format(joinMsg.replace("%player%", player.getDisplayName())));
+        if(enableMsg) {
+            e.setJoinMessage(
+                    format(joinMsg.replace("%player%", player.getDisplayName())));
+        }
         if(plugin.updateMsg && player.isOp()) {
-            ChatUtils.sendPluginMessage(player, "&eA new update has been downloaded. Please restart to get the newest version.");
+            ChatUtils.sendPluginMessage(player, "&eA new update has been downloaded. Please &arestart &eto get the newest version.");
         }
     }
 
     @EventHandler
     public void onPlayerLeave(PlayerQuitEvent e) {
-        enableMsg = plugin.getConfig().getBoolean("Join-Leave.enable-message");
+        final boolean enableMsg = plugin.getConfig().getBoolean("Join-Leave.enabled");
         String quitMsg = plugin.getConfig().getString("Join-Leave.leave-message");
-        if(enableMsg) e.setQuitMessage(format(quitMsg.replace("%player%", e.getPlayer().getDisplayName())));
+        if(enableMsg) {
+            e.setQuitMessage(
+                    format(quitMsg.replace("%player%", e.getPlayer().getDisplayName())));
+        }
         if(plugin.vanish_players.contains(e.getPlayer().getUniqueId())) {
             plugin.vanish_players.remove(e.getPlayer().getUniqueId());
             e.getPlayer().setInvulnerable(false);

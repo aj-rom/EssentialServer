@@ -1,6 +1,6 @@
 /*
  *     File: Clear.java
- *     Last Modified: 4/10/20, 6:21 PM
+ *     Last Modified: 7/13/20, 1:42 AM
  *     Project: EssentialServer
  *     Copyright (C) 2020 CoachL_ck
  *
@@ -29,8 +29,8 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 public class Clear implements CommandExecutor {
-    private EssentialServer plugin;
-
+    private final EssentialServer plugin;
+    private final String otherPerm = "essentialserver.clear.others";
     public Clear(EssentialServer plugin) {
         this.plugin = plugin;
     }
@@ -41,24 +41,40 @@ public class Clear implements CommandExecutor {
         String clearOtherMsg = plugin.getConfig().getString("clear.others-message");
         boolean enableMsg = plugin.getConfig().getBoolean("clear.message-enable");
 
-        if (args.length == 0 && sender.hasPermission("essentialserver.clear")) {
-            if (sender instanceof Player) {
-                Player player = (Player) sender;
-                player.getInventory().clear();
-                if (enableMsg)
-                    ChatUtils.msg(player, clearMsg);
-            } else
-                ChatUtils.logMsg("&cYou must be a player to execute this command!");
-        } else if (args.length == 1 && sender.hasPermission("essentialserver.clear.others")) {
-            try {
+        switch(args.length) {
+            case 0:
+                if(sender instanceof Player) {
+                    Player player = (Player) sender;
+                    player.getInventory().clear();
+                    if (enableMsg)
+                        ChatUtils.msg(player, clearMsg);
+                    return true;
+                }
+                ChatUtils.msg(sender, "&cYou must be a player to do this! &eTry /clear <player>");
+                return true;
+            case 1:
+                if(!sender.hasPermission(otherPerm)) {
+                    ChatUtils.msg(sender, plugin.pMsg);
+                    return true;
+                }
+
                 Player target = Bukkit.getPlayerExact(args[0]);
+                if(target == null) {
+                    ChatUtils.msg(sender, plugin.getOfflinePlayerMessage(args[0]));
+                    return true;
+                }
+
                 target.getInventory().clear();
                 ChatUtils.sendMessages(sender, clearMsg, clearOtherMsg, clearMsg, enableMsg, target);
-            }
-            catch (NullPointerException e) {
-                ChatUtils.msg(sender, "&cThe specified player could not be found!");
-            }
-        } else if (args.length > 1) ChatUtils.msg(sender, "&cToo many arguments! Try /clear <player> or /clear.");
-        return true;
+                return true;
+            default:
+                String syntax = "&cIncorrect syntax! Please try &e/clear";
+                if(sender.hasPermission(otherPerm)) {
+                    syntax = syntax + " &cor &e/clear <player>";
+                }
+                ChatUtils.msg(sender, syntax);
+                return true;
+
+        }
     }
 }

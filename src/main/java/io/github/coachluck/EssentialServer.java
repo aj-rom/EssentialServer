@@ -1,6 +1,6 @@
 /*
  *     File: EssentialServer.java
- *     Last Modified: 6/28/20, 9:00 PM
+ *     Last Modified: 7/13/20, 1:42 AM
  *     Project: EssentialServer
  *     Copyright (C) 2020 CoachL_ck
  *
@@ -58,6 +58,7 @@ import java.util.UUID;
 public class EssentialServer extends JavaPlugin {
     public boolean updateMsg = false;
     public final String pMsg = ChatUtils.format(this.getConfig().getString("permission-message"));
+    public final String offlinePlayerMessage = ChatUtils.format(this.getConfig().getString("offline-player"));
     public ArrayList<UUID> vanish_players = new ArrayList<>();
 
     public HashMap<String, WarpHolder> warpMap = new HashMap<>();
@@ -196,5 +197,9 @@ public class EssentialServer extends JavaPlugin {
                                 warpFile.getDisplayName(s)));
             }
         });
+    }
+
+    public String getOfflinePlayerMessage(String name) {
+        return offlinePlayerMessage.replaceAll("%player%", name);
     }
 }

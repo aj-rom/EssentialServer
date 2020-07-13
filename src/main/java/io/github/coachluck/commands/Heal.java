@@ -1,6 +1,6 @@
 /*
  *     File: Heal.java
- *     Last Modified: 6/28/20, 6:22 PM
+ *     Last Modified: 7/13/20, 1:48 AM
  *     Project: EssentialServer
  *     Copyright (C) 2020 CoachL_ck
  *
@@ -51,7 +51,7 @@ public class Heal implements CommandExecutor {
             }
             Player target = Bukkit.getPlayerExact(args[0]);
             if (target == null) {
-                ChatUtils.msg(sender, plugin.getConfig().getString("offline-player"));
+                ChatUtils.msg(sender, plugin.getOfflinePlayerMessage(args[0]));
                 return true;
             }
             setHealth(target);

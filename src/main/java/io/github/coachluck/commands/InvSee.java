@@ -1,6 +1,6 @@
 /*
  *     File: InvSee.java
- *     Last Modified: 4/10/20, 6:49 PM
+ *     Last Modified: 7/13/20, 1:48 AM
  *     Project: EssentialServer
  *     Copyright (C) 2020 CoachL_ck
  *
@@ -26,11 +26,12 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.PlayerInventory;
 
 public class InvSee implements CommandExecutor {
-    private EssentialServer plugin;
+    private final EssentialServer plugin;
 
     public InvSee(EssentialServer ins) {
         this.plugin = ins;
@@ -38,32 +39,30 @@ public class InvSee implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
         String invSeeMsg = plugin.getConfig().getString("invsee.message");
-        String offlinePlayer = plugin.getConfig().getString("offline-player");
         boolean enableMsg = plugin.getConfig().getBoolean("invsee.message-enable");
-        if(sender instanceof Player) {
-            Player p = (Player) sender;
-            if(label.equalsIgnoreCase("invsee") && sender.hasPermission("essentialserver.invsee")) { // handle invsee
-                if(args.length == 0) { // open player inventory
-                    ChatUtils.msg(p, "&cPlease specify a player. &a/invsee [&bplayer&a]");
-                }
-                else if(args.length == 1) {
-                    try {
-                        Player tP = Bukkit.getServer().getPlayer(args[0]);
-                        PlayerInventory tInv = tP.getInventory();
-                        p.openInventory(tInv);
-                        if(enableMsg) ChatUtils.msg(p, invSeeMsg.replaceAll("%player%", tP.getDisplayName()));
-                    } catch(NullPointerException e) {
-                        ChatUtils.msg(p, offlinePlayer.replaceAll("%player%", args[0]));
-                    }
-                }
-                else {
-                    ChatUtils.msg(p, "&cIncorrect usage! Try &a/invsee [&bplayer&a]");
-                }
-            }
-        }
-        else {
+        if(sender instanceof ConsoleCommandSender) {
             ChatUtils.msg(sender, "&cYou must be a player to use this command!");
+            return true;
         }
+
+        Player p = (Player) sender;
+        if(args.length == 0) { // open player inventory
+            ChatUtils.msg(p, "&cPlease specify a player. &a/invsee [&bplayer&a]");
+            return true;
+        }
+        else if(args.length == 1) {
+            Player tP = Bukkit.getServer().getPlayer(args[0]);
+            if(tP == null) {
+                ChatUtils.msg(sender, plugin.getOfflinePlayerMessage(args[0]));
+                return true;
+            }
+            PlayerInventory tInv = tP.getInventory();
+            p.openInventory(tInv);
+            if(enableMsg) ChatUtils.msg(p, invSeeMsg.replaceAll("%player%", tP.getDisplayName()));
+            return true;
+        }
+
+        ChatUtils.msg(p, "&cIncorrect usage! Try &a/invsee [&bplayer&a]");
         return true;
     }
 }

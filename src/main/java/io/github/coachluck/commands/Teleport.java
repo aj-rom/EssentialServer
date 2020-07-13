@@ -1,6 +1,6 @@
 /*
  *     File: Teleport.java
- *     Last Modified: 6/28/20, 5:50 PM
+ *     Last Modified: 6/29/20, 1:10 PM
  *     Project: EssentialServer
  *     Copyright (C) 2020 CoachL_ck
  *
@@ -122,7 +122,7 @@ public class Teleport implements CommandExecutor {
      */
     private boolean hasCooldown(Player player) {
         UUID uuid = player.getUniqueId();
-        if(player.hasPermission("essentialserver.tp.bypass"))
+        if(player.hasPermission("essentialserver.tp.bypass-cooldown"))
             return false;
 
         return Cooldown.checkCooldown(uuid, cooldowns);

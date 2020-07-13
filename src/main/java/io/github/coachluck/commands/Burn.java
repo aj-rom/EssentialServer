@@ -1,6 +1,6 @@
 /*
  *     File: Burn.java
- *     Last Modified: 4/10/20, 6:21 PM
+ *     Last Modified: 7/13/20, 1:48 AM
  *     Project: EssentialServer
  *     Copyright (C) 2020 CoachL_ck
  *
@@ -26,10 +26,11 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 
 public class Burn implements CommandExecutor {
-    private EssentialServer plugin;
+    private final EssentialServer plugin;
 
     public Burn(EssentialServer plugin) {
         this.plugin = plugin;
@@ -40,27 +41,44 @@ public class Burn implements CommandExecutor {
         String burnMsg = plugin.getConfig().getString("burn.message");
         String burnOtherMsg = plugin.getConfig().getString("burn.others-message");
         String selfMsg = plugin.getConfig().getString("burn.self-message");
+        final String othersPerm = "essentialserver.burn.others";
         boolean enableMsg = plugin.getConfig().getBoolean("burn.message-enable");
-        int BURN_SECONDS = plugin.getConfig().getInt("burn.burn-time") * 20;
+        final int BURN_SECONDS = plugin.getConfig().getInt("burn.burn-time") * 20;
 
-        if (args.length == 0  && sender.hasPermission("essentialserver.burn")) {
-            if (sender instanceof Player) {
+        switch(args.length) {
+            case 0:
+                if(sender instanceof ConsoleCommandSender) {
+                    ChatUtils.msg(sender,"&cYou must be a player to do this! &eTry /burn <player>");
+                    return true;
+                }
                 Player player = (Player) sender;
                 player.setFireTicks(BURN_SECONDS);
                 if (enableMsg)
                     ChatUtils.msg(player, selfMsg);
-            } else
-                ChatUtils.msg(sender,"&cYou must be a player to execute this command!");
-        } else if (args.length == 1 && sender.hasPermission("essentialserver.burn.others")) {
-            Player target = Bukkit.getPlayerExact(args[0]);
-            if(target == null) {
-                ChatUtils.msg(sender, "&cThe specified player could not be found!");
                 return true;
-            }
-            target.setFireTicks(BURN_SECONDS);
-            ChatUtils.sendMessages(sender, burnMsg, burnOtherMsg, burnMsg, enableMsg, target);
-        } else if (args.length > 1)
-            ChatUtils.msg(sender, "&cToo many arguments! Try /burn <player> or /burn.");
-        return true;
+            case 1:
+                if(!sender.hasPermission(othersPerm)) {
+                    ChatUtils.msg(sender, plugin.pMsg);
+                    return true;
+                }
+
+                Player target = Bukkit.getPlayerExact(args[0]);
+                if(target == null) {
+                    ChatUtils.msg(sender, plugin.getOfflinePlayerMessage(args[0]));
+                    return true;
+                }
+
+                target.setFireTicks(BURN_SECONDS);
+                ChatUtils.sendMessages(sender, burnMsg, burnOtherMsg, burnMsg, enableMsg, target);
+                return true;
+
+            default:
+                String syntax = "&cIncorrect Syntax! Try /burn";
+                if(sender.hasPermission("essentialserver.burn.others")) {
+                    syntax = syntax + " or /burn <player>";
+                }
+                ChatUtils.msg(sender, syntax);
+                return true;
+        }
     }
 }

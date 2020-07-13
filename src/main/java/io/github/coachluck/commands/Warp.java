@@ -1,6 +1,6 @@
 /*
  *     File: Warp.java
- *     Last Modified: 6/28/20, 4:14 PM
+ *     Last Modified: 7/13/20, 1:30 AM
  *     Project: EssentialServer
  *     Copyright (C) 2020 CoachL_ck
  *
@@ -76,7 +76,7 @@ public class Warp implements CommandExecutor, TabCompleter {
                 ChatUtils.msg(p, warpNotFound.replaceAll("%warp%", warpName));
                 return true;
             }
-            if(!p.hasPermission("warps.*") && !p.hasPermission("warps." + warpName)) {
+            if(!p.hasPermission("essentialserver.warp.*") && !p.hasPermission("essentialserver.warps." + warpName)) {
                 ChatUtils.msg(p, noPermWarp.replaceAll("%warp%", warpName));
                 return true;
             }
@@ -96,6 +96,7 @@ public class Warp implements CommandExecutor, TabCompleter {
 
         final List<String> currentWarps = new ArrayList<>(plugin.warpMap.keySet());
         ComponentBuilder warpList = new ComponentBuilder();
+        warpList.append(" ");
         Collections.sort(currentWarps);
         for(String s : currentWarps) {
             if(p.hasPermission("warps." + s)) {
@@ -119,7 +120,7 @@ public class Warp implements CommandExecutor, TabCompleter {
      */
     private boolean hasCooldown(Player player) {
         UUID uuid = player.getUniqueId();
-        if(player.hasPermission("warps.bypass-cooldown"))
+        if(player.hasPermission("essentialserver.warp.bypass-cooldown"))
             return false;
 
         return Cooldown.checkCooldown(uuid, cooldowns);

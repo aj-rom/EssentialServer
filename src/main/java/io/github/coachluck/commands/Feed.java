@@ -1,6 +1,6 @@
 /*
  *     File: Feed.java
- *     Last Modified: 4/10/20, 7:01 PM
+ *     Last Modified: 7/13/20, 1:42 AM
  *     Project: EssentialServer
  *     Copyright (C) 2020 CoachL_ck
  *
@@ -51,7 +51,7 @@ public class Feed implements CommandExecutor {
         } else if (args.length == 1 && sender.hasPermission("essentialserver.feed.others")) {
             Player target = Bukkit.getPlayerExact(args[0]);
             if(target == null) {
-                ChatUtils.msg(sender, "&cThe specified player could not be found!");
+                ChatUtils.msg(sender, plugin.getOfflinePlayerMessage(args[0]));
                 return true;
             }
             int foodLvL = target.getFoodLevel();
