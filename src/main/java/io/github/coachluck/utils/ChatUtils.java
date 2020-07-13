@@ -1,6 +1,6 @@
 /*
  *     File: ChatUtils.java
- *     Last Modified: 7/13/20, 1:42 AM
+ *     Last Modified: 7/13/20, 4:12 PM
  *     Project: EssentialServer
  *     Copyright (C) 2020 CoachL_ck
  *
@@ -20,7 +20,6 @@
 
 package io.github.coachluck.utils;
 
-import io.github.coachluck.EssentialServer;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.chat.ClickEvent;
