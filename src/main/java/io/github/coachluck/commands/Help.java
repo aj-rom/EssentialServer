@@ -1,6 +1,6 @@
 /*
  *     File: Help.java
- *     Last Modified: 7/13/20, 1:37 AM
+ *     Last Modified: 7/14/20, 12:34 AM
  *     Project: EssentialServer
  *     Copyright (C) 2020 CoachL_ck
  *
@@ -25,10 +25,10 @@ import io.github.coachluck.utils.ChatUtils;
 import io.github.coachluck.warps.WarpFile;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.BaseComponent;
-import net.md_5.bungee.api.chat.ComponentBuilder;
-import net.md_5.bungee.api.chat.TextComponent;
-import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.ClickEvent;
+import net.md_5.bungee.api.chat.ComponentBuilder;
+import net.md_5.bungee.api.chat.HoverEvent;
+import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -53,6 +53,7 @@ public class Help implements CommandExecutor {
             if(args.length != 1) {
                 if (sender instanceof ConsoleCommandSender) {
                     ChatUtils.logMsg("&ev" + plugin.getDescription().getVersion() + " &7created by &bCoachL_ck");
+                    ChatUtils.logMsg("&7 - &ehttps://github.com/CoachLuck/EssentialServer/wiki");
                     return true;
                 }
 
@@ -69,7 +70,7 @@ public class Help implements CommandExecutor {
             } else {
                 if(args[0].equalsIgnoreCase("reload")) {
                     if(!sender.hasPermission("essentialserver.reload")) {
-                        ChatUtils.msg(sender, plugin.pMsg);
+                        ChatUtils.sendMessage(sender, plugin.pMsg);
                         return true;
                     }
                     plugin.reloadConfig();
@@ -87,36 +88,37 @@ public class Help implements CommandExecutor {
      * @param sender : Who is running the command.
      * **/
     public void sendHelp(CommandSender sender) {
-        if(sender instanceof Player) {
-            Player p = (Player) sender;
-            List<Command> cmdList = PluginCommandYamlParser.parse(plugin);
-            p.sendMessage("");
-            p.sendMessage(ChatUtils.format("&7&m                                   &r&8[ &c&lHelp&r &8]&7&m                                  "));
-            TextComponent header = new TextComponent(ChatUtils.format(" &7Hover over &ecommands &7for more info, &eclick &7to run the command"));
-            header.setColor(ChatColor.GRAY);
-            header.setHoverEvent(
-                    new HoverEvent(HoverEvent.Action.SHOW_TEXT,
-                            new ComponentBuilder(
-                                    ChatUtils.format("&7Usage with &b<> &7 is required. &c[] &7is optional"))
-                                    .create()));
-            p.spigot().sendMessage(header);
-            p.sendMessage("");
-
-            ComponentBuilder main = new ComponentBuilder();
-            main.append(" ");
-            for(Command cmd : cmdList) {
-                if(p.hasPermission(cmd.getPermission())) {
-                    main.append(ChatUtils.getClickHelp(cmd));
-                    main.append(", ");
-                }
-            }
-
-            p.spigot().sendMessage(main.create());
-            p.sendMessage("");
-            p.sendMessage(ChatUtils.format("&7&m                           &r&8[ &cEssential Server&r &8]&7&m                           "));
-            p.sendMessage("");
-        } else {
-            ChatUtils.logMsg("&cThis can only be used in game.");
+        if(!(sender instanceof Player)) {
+            ChatUtils.logMsg("&cYou must be a player to do this! &eTry /esinfo or /es reload");
+            return;
         }
+
+        Player p = (Player) sender;
+        List<Command> cmdList = PluginCommandYamlParser.parse(plugin);
+        p.sendMessage("");
+        p.sendMessage(ChatUtils.format("&7&m                                   &r&8[ &c&lHelp&r &8]&7&m                                  "));
+        TextComponent header = new TextComponent(ChatUtils.format(" &7Hover over &ecommands &7for more info, &eclick &7to run the command"));
+        header.setColor(ChatColor.GRAY);
+        header.setHoverEvent(
+                new HoverEvent(HoverEvent.Action.SHOW_TEXT,
+                        new ComponentBuilder(
+                                ChatUtils.format("&7Usage with &b<> &7 is required. &c[] &7is optional"))
+                                .create()));
+        p.spigot().sendMessage(header);
+        p.sendMessage("");
+
+        ComponentBuilder main = new ComponentBuilder();
+        main.append(" ");
+        for(Command cmd : cmdList) {
+            if(p.hasPermission(cmd.getPermission())) {
+                main.append(ChatUtils.getClickHelp(cmd));
+                main.append(", ");
+            }
+        }
+
+        p.spigot().sendMessage(main.create());
+        p.sendMessage("");
+        p.sendMessage(ChatUtils.format("&7&m                           &r&8[ &cEssential Server&r &8]&7&m                           "));
+        p.sendMessage("");
     }
 }

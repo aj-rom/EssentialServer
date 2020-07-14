@@ -1,6 +1,6 @@
 /*
  *     File: InvSee.java
- *     Last Modified: 7/13/20, 1:48 AM
+ *     Last Modified: 7/13/20, 11:38 PM
  *     Project: EssentialServer
  *     Copyright (C) 2020 CoachL_ck
  *
@@ -26,7 +26,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.PlayerInventory;
 
@@ -40,29 +39,27 @@ public class InvSee implements CommandExecutor {
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
         String invSeeMsg = plugin.getConfig().getString("invsee.message");
         boolean enableMsg = plugin.getConfig().getBoolean("invsee.message-enable");
-        if(sender instanceof ConsoleCommandSender) {
-            ChatUtils.msg(sender, "&cYou must be a player to use this command!");
+        if(!(sender instanceof Player)) {
+            ChatUtils.msg(sender, "&cYou must be a player to do this!");
             return true;
         }
 
         Player p = (Player) sender;
-        if(args.length == 0) { // open player inventory
-            ChatUtils.msg(p, "&cPlease specify a player. &a/invsee [&bplayer&a]");
-            return true;
-        }
-        else if(args.length == 1) {
-            Player tP = Bukkit.getServer().getPlayer(args[0]);
-            if(tP == null) {
-                ChatUtils.msg(sender, plugin.getOfflinePlayerMessage(args[0]));
-                return true;
-            }
-            PlayerInventory tInv = tP.getInventory();
-            p.openInventory(tInv);
-            if(enableMsg) ChatUtils.msg(p, invSeeMsg.replaceAll("%player%", tP.getDisplayName()));
+        if(args.length != 1) {
+            ChatUtils.msg(p, "&cIncorrect Syntax! &eTry /invsee [player]");
             return true;
         }
 
-        ChatUtils.msg(p, "&cIncorrect usage! Try &a/invsee [&bplayer&a]");
+        Player tP = Bukkit.getServer().getPlayer(args[0]);
+        if(tP == null) {
+            ChatUtils.msg(sender, plugin.getOfflinePlayerMessage(args[0]));
+            return true;
+        }
+
+        PlayerInventory tInv = tP.getInventory();
+        p.openInventory(tInv);
+        if(enableMsg)
+            ChatUtils.msg(p, invSeeMsg.replaceAll("%player%", tP.getDisplayName()));
         return true;
     }
 }

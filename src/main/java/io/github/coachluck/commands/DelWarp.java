@@ -1,6 +1,6 @@
 /*
  *     File: DelWarp.java
- *     Last Modified: 6/28/20, 2:30 PM
+ *     Last Modified: 7/13/20, 11:34 PM
  *     Project: EssentialServer
  *     Copyright (C) 2020 CoachL_ck
  *
@@ -41,15 +41,17 @@ public class DelWarp implements CommandExecutor, TabCompleter {
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String s, String[] args) {
         if(args.length != 1) {
-            ChatUtils.msg(sender, "&cIncorrect usage: &e/delwarp &7<&bWarpName&7>");
+            ChatUtils.msg(sender, "&cIncorrect Syntax. &eTry /delwarp &7<&bWarpName&7>");
             return true;
         }
 
-        String warpName = args[0].toLowerCase();
+        final String warpName = args[0].toLowerCase();
         if(!plugin.warpMap.containsKey(warpName)) {
-            ChatUtils.msg(sender, "&cCould not find warp &e" + warpName);
+            final String warpNotFound = plugin.getWarpFile().getWarpData().getString("messages.warp-not-found");
+            ChatUtils.msg(sender, warpNotFound.replaceAll("%warp%", args[0]));
             return true;
         }
+
         plugin.getWarpFile().removeWarp(warpName);
         plugin.reloadWarpsMap();
         ChatUtils.msg(sender, "&7You have &cremoved &7warp: &e" + warpName);
@@ -62,8 +64,9 @@ public class DelWarp implements CommandExecutor, TabCompleter {
             ArrayList<String> warps = new ArrayList<>(plugin.warpMap.keySet());
             Collections.sort(warps);
             return warps;
-        } else {
-            return new ArrayList<>();
         }
+
+        return new ArrayList<>();
+
     }
 }

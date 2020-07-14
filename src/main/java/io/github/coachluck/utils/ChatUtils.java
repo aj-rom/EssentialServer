@@ -1,6 +1,6 @@
 /*
  *     File: ChatUtils.java
- *     Last Modified: 7/13/20, 4:12 PM
+ *     Last Modified: 7/14/20, 12:34 AM
  *     Project: EssentialServer
  *     Copyright (C) 2020 CoachL_ck
  *
@@ -21,10 +21,10 @@
 package io.github.coachluck.utils;
 
 import net.md_5.bungee.api.chat.BaseComponent;
-import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.chat.ClickEvent;
-import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
+import net.md_5.bungee.api.chat.HoverEvent;
+import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -53,6 +53,9 @@ public class ChatUtils {
                 "&c" + SMALL_ARROWS_RIGHT + "&r " + message));
         else logMsg(message);
     }
+    public static void sendMessage(CommandSender s, String message) {
+        s.sendMessage(format(message));
+    }
     /**
      * Logs the message to console with plugin prefix
      * @param message the message to color code and send to console
@@ -62,7 +65,7 @@ public class ChatUtils {
     }
 
     public static void sendPluginMessage(Player p, String message) {
-        p.sendMessage(format("&7[&bEssential&eServer&7]&e " + message));
+        p.sendMessage(format("&8[&7Essential&eServer&8]&e " + message));
     }
 
     /**

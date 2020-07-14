@@ -1,6 +1,6 @@
 /*
  *     File: Warp.java
- *     Last Modified: 7/13/20, 1:30 AM
+ *     Last Modified: 7/14/20, 12:34 AM
  *     Project: EssentialServer
  *     Copyright (C) 2020 CoachL_ck
  *
@@ -24,7 +24,6 @@ import io.github.coachluck.EssentialServer;
 import io.github.coachluck.utils.ChatUtils;
 import io.github.coachluck.utils.Cooldown;
 import io.github.coachluck.warps.WarpHolder;
-
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
@@ -37,11 +36,11 @@ import org.bukkit.command.TabCompleter;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 
-import java.util.UUID;
-import java.util.List;
-import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.UUID;
 
 
 public class Warp implements CommandExecutor, TabCompleter {
@@ -61,22 +60,23 @@ public class Warp implements CommandExecutor, TabCompleter {
         final String warpListColor = warpData.getString("messages.warp-list-color");
 
         if(!(sender instanceof Player)) {
-            ChatUtils.logMsg("&cYou must be a player to use this command.");
+            ChatUtils.logMsg("&cYou must be a player to do this!");
+            return true;
+        }
+
+        if(args.length > 1) {
+            ChatUtils.msg(sender, "&cIncorrect Syntax. &eTry /warp &b<WarpName>");
             return true;
         }
 
         Player p = (Player) sender;
-        if(args.length > 1) {
-            ChatUtils.msg(p, "&cIncorrect usage: &e/warp &b<WarpName>");
-            return true;
-        }
         if(args.length == 1) {
             String warpName = args[0].toLowerCase();
             if(plugin.warpMap.get(warpName) == null) {
-                ChatUtils.msg(p, warpNotFound.replaceAll("%warp%", warpName));
+                ChatUtils.msg(p, warpNotFound.replaceAll("%warp%", args[0]));
                 return true;
             }
-            if(!p.hasPermission("essentialserver.warp.*") && !p.hasPermission("essentialserver.warps." + warpName)) {
+            if(!p.hasPermission("essentialserver.warps.*") && !p.hasPermission("essentialserver.warps." + warpName)) {
                 ChatUtils.msg(p, noPermWarp.replaceAll("%warp%", warpName));
                 return true;
             }
@@ -99,7 +99,7 @@ public class Warp implements CommandExecutor, TabCompleter {
         warpList.append(" ");
         Collections.sort(currentWarps);
         for(String s : currentWarps) {
-            if(p.hasPermission("warps." + s)) {
+            if(p.hasPermission("essentialserver.warps." + s)) {
                 WarpHolder warpHolder = plugin.warpMap.get(s);
                 TextComponent warp = new TextComponent(ChatUtils.format(warpListColor + s + warpData.getString("messages.warp-list-separator")));
                         warp.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/warp " + s));
@@ -144,15 +144,15 @@ public class Warp implements CommandExecutor, TabCompleter {
             ArrayList<String> allwarps = new ArrayList<>(plugin.warpMap.keySet());
             ArrayList<String> allowedWarps = new ArrayList<>();
             for(String s : allwarps) {
-                if(sender.hasPermission("warps." + s)) {
+                if(sender.hasPermission("essentialserver.warps." + s)) {
                     allowedWarps.add(s);
                 }
             }
             Collections.sort(allowedWarps);
             return allowedWarps;
 
-        } else {
-            return new ArrayList<>();
         }
+
+        return new ArrayList<>();
     }
 }

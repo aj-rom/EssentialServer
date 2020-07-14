@@ -1,6 +1,6 @@
 /*
  *     File: Teleport.java
- *     Last Modified: 6/29/20, 1:10 PM
+ *     Last Modified: 7/13/20, 10:34 PM
  *     Project: EssentialServer
  *     Copyright (C) 2020 CoachL_ck
  *
@@ -42,23 +42,21 @@ public class Teleport implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        String offlinePlayer = plugin.getConfig().getString("offline-player");
 
-        if(!(sender instanceof Player)) {
-            ChatUtils.logMsg("&cYou must be a player to use this command!");
-            return true;
-        }
-
-        Player player = (Player) sender;
         switch(args.length) {
             case 1:
-                Player target = Bukkit.getPlayer(args[0]);
-                if(target == null) {
-                    ChatUtils.msg(player, offlinePlayer.replaceAll("%player%", args[0]));
+                if(!(sender instanceof Player)) {
+                    ChatUtils.logMsg("&cYou must be a player to do this! &eTry /tp <player1> <player2>");
                     return true;
                 }
-                if (player.getDisplayName().equalsIgnoreCase(target.getDisplayName())) {
-                    ChatUtils.msg(player, plugin.getConfig().getString("teleport.self"));
+                final Player player = (Player) sender;
+                final Player target = Bukkit.getPlayer(args[0]);
+                if(target == null) {
+                    ChatUtils.msg(sender, plugin.getOfflinePlayerMessage(args[0]));
+                    return true;
+                }
+                if (sender.getName().equals(target.getName())) {
+                    ChatUtils.msg(sender, plugin.getConfig().getString("teleport.self"));
                     return true;
                 }
                 if(hasCooldown(player)) {
@@ -70,48 +68,50 @@ public class Teleport implements CommandExecutor {
                 tPTask(player, target);
                 return true;
             case 2:
-                if(!player.hasPermission("essentialserver.tp.others")) {
-                    sendUsage(player);
+                if(!sender.hasPermission("essentialserver.tp.others")) {
+                    sendUsage(sender);
                     return true;
                 }
 
                 final Player playerToSend = Bukkit.getPlayer(args[0]);
                 final Player target1 = Bukkit.getPlayer(args[1]);
                 if(playerToSend == null) {
-                    ChatUtils.msg(player, offlinePlayer.replaceAll("%player%", args[0]));
+                    ChatUtils.msg(sender, plugin.getOfflinePlayerMessage(args[0]));
                     return true;
                 }
                 if(target1 == null) {
-                    ChatUtils.msg(player, offlinePlayer.replaceAll("%player%", args[1]));
+                    ChatUtils.msg(sender, plugin.getOfflinePlayerMessage(args[1]));
                     return true;
                 }
                 if(playerToSend.getDisplayName().equalsIgnoreCase(target1.getDisplayName())) {
-                    ChatUtils.msg(player, "&cDid you really mean to do that? Try again...");
+                    ChatUtils.msg(sender, "&cDid you really mean to do that? Try again...");
                     return true;
                 }
-                if(hasCooldown(player)) {
-                    ChatUtils.msg(player, plugin.getConfig().getString("teleport.cooldown-message")
-                            .replaceAll("%time%", Integer.toString(cooldowns.get(player.getUniqueId()).getTimeRemaining())));
+                if(sender instanceof Player && hasCooldown((Player) sender)) {
+                    final Player player1 = (Player) sender;
+                    ChatUtils.msg(player1, plugin.getConfig().getString("teleport.cooldown-message")
+                            .replaceAll("%time%",
+                                    Integer.toString(cooldowns.get(player1.getUniqueId()).getTimeRemaining())));
                     return true;
                 }
 
-                tPTask(playerToSend, target1, player);
+                tPTask(playerToSend, target1, sender);
                 return true;
             default:
-                sendUsage(player);
+                sendUsage(sender);
                 return true;
         }
     }
 
     /**
      * Sends the usage messages to the player
-     * @param player the player to send messages too
+     * @param sender the CommandSender to send messages too
      */
-    private void sendUsage(Player player) {
-        ChatUtils.msg(player, "&cInsufficient arguments! &7Please try again.");
-        ChatUtils.msg(player, "&cTo teleport yourself: &e/tp &c<&7otherplayer&c>");
-        if (player.hasPermission("essentialserver.tp.others")) {
-            ChatUtils.msg(player, "&cTo teleport others: &e/tp &c<&7player&c> <&7otherplayer&c>");
+    private void sendUsage(CommandSender sender) {
+        ChatUtils.msg(sender, "&cInsufficient arguments! &7Please try again.");
+        ChatUtils.msg(sender, "&cTo teleport yourself: &e/tp &c<&7otherplayer&c>");
+        if (sender.hasPermission("essentialserver.tp.others")) {
+            ChatUtils.msg(sender, "&cTo teleport others: &e/tp &c<&7player&c> <&7otherplayer&c>");
         }
     }
 
@@ -150,7 +150,7 @@ public class Teleport implements CommandExecutor {
      * @param target the player to teleport TO
      * @param sender the person initiating the Teleport
      */
-    private void tPTask(Player playerToSend, Player target, Player sender) {
+    private void tPTask(Player playerToSend, Player target, CommandSender sender) {
         final boolean enableMsg = plugin.getConfig().getBoolean("teleport.message-enable");
         final String tpOtherMsg = plugin.getConfig().getString("teleport.others-message");
         if(enableMsg) {

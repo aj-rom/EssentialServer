@@ -2,7 +2,8 @@
 # 'warps' will contain all of the current warps on the server
 # 'warps.<warpname>.name - sets the display name for the warp
 # Permisison: 'essentialserver.warp.bypass-cooldown' - disable warp cooldowns
-# ``
+# Per-Warp Perm: `essentialserver.warps.<warpname>` (<warpname> must be lowercase)
+# All-Warps Perm: `essentialserver.warps.*`
 cooldown: 5
 default-sound: BLOCK_PORTAL_TRAVEL
 messages:
@@ -17,7 +18,7 @@ messages:
   warp-list-separator: '&7, '
   warp-list-footer:
     - ''
-    - '&7&m                                                                        '
+    - '&7&m                                                                             '
   warp-not-found: '&7Could not find warp&f: &c%warp%'
   no-perm-for-warp: '&7You do not have permission to warp to &c%warp%'
   warp-already-exists: '&c%warp% &7already exists! Try using a different name.'

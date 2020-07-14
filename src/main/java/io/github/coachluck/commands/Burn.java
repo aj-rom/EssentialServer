@@ -1,6 +1,6 @@
 /*
  *     File: Burn.java
- *     Last Modified: 7/13/20, 1:48 AM
+ *     Last Modified: 7/13/20, 11:34 PM
  *     Project: EssentialServer
  *     Copyright (C) 2020 CoachL_ck
  *
@@ -58,7 +58,7 @@ public class Burn implements CommandExecutor {
                 return true;
             case 1:
                 if(!sender.hasPermission(othersPerm)) {
-                    ChatUtils.msg(sender, plugin.pMsg);
+                    ChatUtils.sendMessage(sender, plugin.pMsg);
                     return true;
                 }
 
@@ -73,7 +73,7 @@ public class Burn implements CommandExecutor {
                 return true;
 
             default:
-                String syntax = "&cIncorrect Syntax! Try /burn";
+                String syntax = "&cIncorrect Syntax! &eTry /burn";
                 if(sender.hasPermission("essentialserver.burn.others")) {
                     syntax = syntax + " or /burn <player>";
                 }

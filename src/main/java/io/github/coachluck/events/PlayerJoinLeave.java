@@ -1,6 +1,6 @@
 /*
  *     File: PlayerJoinLeave.java
- *     Last Modified: 7/13/20, 1:13 AM
+ *     Last Modified: 7/14/20, 12:12 AM
  *     Project: EssentialServer
  *     Copyright (C) 2020 CoachL_ck
  *
@@ -22,14 +22,18 @@ package io.github.coachluck.events;
 
 import io.github.coachluck.EssentialServer;
 import io.github.coachluck.utils.ChatUtils;
+import net.md_5.bungee.api.ChatColor;
+import net.md_5.bungee.api.chat.BaseComponent;
+import net.md_5.bungee.api.chat.ClickEvent;
+import net.md_5.bungee.api.chat.ComponentBuilder;
+import net.md_5.bungee.api.chat.HoverEvent;
+import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
-
-import static io.github.coachluck.utils.ChatUtils.format;
 
 public class PlayerJoinLeave implements Listener {
     private final EssentialServer plugin;
@@ -50,10 +54,29 @@ public class PlayerJoinLeave implements Listener {
         }
         if(enableMsg) {
             e.setJoinMessage(
-                    format(joinMsg.replace("%player%", player.getDisplayName())));
+                    ChatUtils.format(joinMsg.replace("%player%", player.getDisplayName())));
         }
-        if(plugin.updateMsg && player.isOp()) {
-            ChatUtils.sendPluginMessage(player, "&eA new update has been downloaded. Please &arestart &eto get the newest version.");
+        if(plugin.updateMsg) {
+            if(player.isOp() || player.hasPermission("essentialserver.*")) {
+                BaseComponent pre = new TextComponent(ChatUtils.format("&8[&cEssential&7Server&8] "));
+
+                BaseComponent front = new TextComponent("A new update is available! Click ");
+                front.setColor(ChatColor.YELLOW);
+
+                BaseComponent button = new TextComponent("here");
+                button.setColor(ChatColor.GOLD);
+                button.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(ChatUtils.format("&7Click Me!")).create()));
+                button.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://bit.ly/346mO6j"));
+                BaseComponent end = new TextComponent(" to download the newest version.");
+                end.setColor(ChatColor.YELLOW);
+
+                ComponentBuilder comp = new ComponentBuilder();
+                comp.append(pre);
+                comp.append(front);
+                comp.append(button);
+                comp.append(end);
+                player.spigot().sendMessage(comp.create());
+            }
         }
     }
 
@@ -63,7 +86,7 @@ public class PlayerJoinLeave implements Listener {
         String quitMsg = plugin.getConfig().getString("Join-Leave.leave-message");
         if(enableMsg) {
             e.setQuitMessage(
-                    format(quitMsg.replace("%player%", e.getPlayer().getDisplayName())));
+                    ChatUtils.format(quitMsg.replace("%player%", e.getPlayer().getDisplayName())));
         }
         if(plugin.vanish_players.contains(e.getPlayer().getUniqueId())) {
             plugin.vanish_players.remove(e.getPlayer().getUniqueId());

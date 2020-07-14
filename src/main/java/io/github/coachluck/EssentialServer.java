@@ -1,6 +1,6 @@
 /*
  *     File: EssentialServer.java
- *     Last Modified: 7/13/20, 1:42 AM
+ *     Last Modified: 7/14/20, 12:01 AM
  *     Project: EssentialServer
  *     Copyright (C) 2020 CoachL_ck
  *
@@ -31,7 +31,6 @@ import io.github.coachluck.commands.Help;
 import io.github.coachluck.commands.IGameMode;
 import io.github.coachluck.commands.InvSee;
 import io.github.coachluck.commands.Kill;
-import io.github.coachluck.commands.SetSpawn;
 import io.github.coachluck.commands.SetWarp;
 import io.github.coachluck.commands.Smite;
 import io.github.coachluck.commands.Spawn;
@@ -89,8 +88,7 @@ public class EssentialServer extends JavaPlugin {
     private void enableCommands() {
         this.getCommand("esHelp").setExecutor(new Help(this));
         this.getCommand("es").setExecutor(new Help(this));
-        this.getCommand("Spawn").setExecutor(new Spawn(this));
-        this.getCommand("SetSpawn").setExecutor(new SetSpawn());
+        this.getCommand("spawn").setExecutor(new Spawn(this));
         this.getCommand("Smite").setExecutor(new Smite(this));
         this.getCommand("Fly").setExecutor(new Fly(this));
         this.getCommand("Feed").setExecutor(new Feed(this));
@@ -169,8 +167,8 @@ public class EssentialServer extends JavaPlugin {
                 ChatUtils.logMsg("&bYou are running the latest version.");
                 return;
             }
-
-            ChatUtils.logMsg("&aThere is a new update available.");
+            updateMsg = true;
+            ChatUtils.logMsg("&aThere is a new update available. &ehttps://bit.ly/346mO6j");
         });
     }
 

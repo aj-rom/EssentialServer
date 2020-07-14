@@ -43,7 +43,7 @@ spawn:
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 gamemode:
   message: '&7Gamemode has been switched to &b%mode%&7.'
-  message-others: '&7You have changed the game mode of &e%player% &7to &b%mode%.'
+  message-others: '&7You have changed the game mode of &e%player% &7to &b%mode%&7.'
   message-enable: true
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
@@ -65,7 +65,7 @@ feed:
 heal:
   amount: 20
   message: '&7You have been &a&lhealed&r&7!'
-  other-message: '&7You have healed &e&l%player%&r&7!'
+  other-message: '&7You have &ahealed &e&l%player%&r&7!'
   message-enable: true
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
@@ -100,7 +100,7 @@ burn:
 # others-message: %player%, the player you are performing the command on  #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 smite:
-  message: '&7You have been &e&lSTRUCK&r &7 with &e&nlightning&r&7!'
+  message: '&7You have been &e&lSTRUCK&r &7with &e&nlightning&r&7!'
   others-message: '&7You have struck &e&l%player%&r&7 with lightning!'
   self-message: '&7You have struck &e&lYourself??&r&7 with lightning!'
   message-enable: true

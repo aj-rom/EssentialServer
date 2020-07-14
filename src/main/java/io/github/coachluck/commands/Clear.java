@@ -1,6 +1,6 @@
 /*
  *     File: Clear.java
- *     Last Modified: 7/13/20, 1:42 AM
+ *     Last Modified: 7/13/20, 11:34 PM
  *     Project: EssentialServer
  *     Copyright (C) 2020 CoachL_ck
  *
@@ -30,7 +30,7 @@ import org.bukkit.entity.Player;
 
 public class Clear implements CommandExecutor {
     private final EssentialServer plugin;
-    private final String otherPerm = "essentialserver.clear.others";
+
     public Clear(EssentialServer plugin) {
         this.plugin = plugin;
     }
@@ -40,6 +40,7 @@ public class Clear implements CommandExecutor {
         String clearMsg = plugin.getConfig().getString("clear.message");
         String clearOtherMsg = plugin.getConfig().getString("clear.others-message");
         boolean enableMsg = plugin.getConfig().getBoolean("clear.message-enable");
+        final String otherPerm = "essentialserver.clear.others";
 
         switch(args.length) {
             case 0:
@@ -50,11 +51,11 @@ public class Clear implements CommandExecutor {
                         ChatUtils.msg(player, clearMsg);
                     return true;
                 }
-                ChatUtils.msg(sender, "&cYou must be a player to do this! &eTry /clear <player>");
+                ChatUtils.logMsg( "&cYou must be a player to do this! &eTry /clear <player>");
                 return true;
             case 1:
                 if(!sender.hasPermission(otherPerm)) {
-                    ChatUtils.msg(sender, plugin.pMsg);
+                    ChatUtils.sendMessage(sender, plugin.pMsg);
                     return true;
                 }
 
@@ -68,13 +69,12 @@ public class Clear implements CommandExecutor {
                 ChatUtils.sendMessages(sender, clearMsg, clearOtherMsg, clearMsg, enableMsg, target);
                 return true;
             default:
-                String syntax = "&cIncorrect syntax! Please try &e/clear";
+                String syntax = "&cIncorrect syntax! &eTry /clear";
                 if(sender.hasPermission(otherPerm)) {
                     syntax = syntax + " &cor &e/clear <player>";
                 }
                 ChatUtils.msg(sender, syntax);
                 return true;
-
         }
     }
 }

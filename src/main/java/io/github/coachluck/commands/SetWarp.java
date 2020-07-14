@@ -1,6 +1,6 @@
 /*
  *     File: SetWarp.java
- *     Last Modified: 6/28/20, 12:45 PM
+ *     Last Modified: 7/13/20, 11:21 PM
  *     Project: EssentialServer
  *     Copyright (C) 2020 CoachL_ck
  *
@@ -32,7 +32,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static io.github.coachluck.utils.ChatUtils.format;
-import static io.github.coachluck.utils.ChatUtils.logMsg;
 
 public class SetWarp implements TabCompleter, CommandExecutor {
     private EssentialServer plugin;
@@ -43,27 +42,32 @@ public class SetWarp implements TabCompleter, CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String s, String[] args) {
-        if(sender instanceof Player) {
-            Player p = (Player) sender;
-            if(args.length == 1) {
-                String warpName = args[0].toLowerCase();
-                if(plugin.warpMap.get(warpName) != null) {
-                    ChatUtils.msg(p, "&e" + args[0] + " &7already exists! Please use a different name.");
-                    return true;
-                }
-                if(plugin.getWarpFile().addWarp(args[0], p.getLocation())) {
-                    ChatUtils.msg(p, plugin.getWarpFile().getWarpData().getString("messages.create-warp").replaceAll("%warp%", warpName));
-                } else {
-                    ChatUtils.msg(p, plugin.getWarpFile().getWarpData().getString("messages.warp-already-exists").replaceAll("%warp%", warpName));
-                }
-                plugin.reloadWarpsMap();
-
-            } else {
-                ChatUtils.msg(p, "&cIncorrect usage: &e/setwarp &b<WarpName>");
-            }
-        } else {
-            logMsg("&cYou must be a player to use this command.");
+        if(!(sender instanceof Player)) {
+            ChatUtils.logMsg("&cYou must be a player to do this!");
+            return true;
         }
+
+        if(args.length != 1) {
+            ChatUtils.msg(sender, "&cIncorrect usage: &e/setwarp &b<WarpName>");
+            return true;
+        }
+
+        Player p = (Player) sender;
+        String warpName = args[0].toLowerCase();
+        if(plugin.warpMap.get(warpName) != null) {
+            ChatUtils.msg(p, "&e" + args[0] + " &7already exists! Please use a different name.");
+            return true;
+        }
+
+        if(!plugin.getWarpFile().addWarp(args[0], p.getLocation())) {
+            ChatUtils.msg(p, plugin.getWarpFile().getWarpData()
+                    .getString("messages.warp-already-exists").replaceAll("%warp%", warpName));
+            return true;
+        }
+
+        ChatUtils.msg(p, plugin.getWarpFile().getWarpData()
+                .getString("messages.create-warp").replaceAll("%warp%", warpName));
+        plugin.reloadWarpsMap();
         return true;
     }
 

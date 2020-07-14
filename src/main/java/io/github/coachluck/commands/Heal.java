@@ -1,6 +1,6 @@
 /*
  *     File: Heal.java
- *     Last Modified: 7/13/20, 1:48 AM
+ *     Last Modified: 7/14/20, 12:34 AM
  *     Project: EssentialServer
  *     Copyright (C) 2020 CoachL_ck
  *
@@ -42,43 +42,52 @@ public class Heal implements CommandExecutor {
         String healMsg = plugin.getConfig().getString("heal.message");
         healAmount = plugin.getConfig().getInt("heal.amount");
         String healOtherMsg = plugin.getConfig().getString("heal.other-message");
-        boolean enableMsg = plugin.getConfig().getBoolean("heal.message-enable");
+        final boolean enableMsg = plugin.getConfig().getBoolean("heal.message-enable");
 
-        if (args.length == 1) {
-            if (!sender.hasPermission("essentialserver.heal.others")) {
-                sender.sendMessage(ChatUtils.format(plugin.pMsg));
-                return true;
-            }
-            Player target = Bukkit.getPlayerExact(args[0]);
-            if (target == null) {
-                ChatUtils.msg(sender, plugin.getOfflinePlayerMessage(args[0]));
-                return true;
-            }
-            setHealth(target);
-            ChatUtils.sendMessages(sender, healMsg, healOtherMsg, healMsg, enableMsg, target);
-            return true;
-        }
+        switch (args.length) {
+            case 0:
+                if(!(sender instanceof Player)) {
+                    ChatUtils.msg(sender, "&cYou must be a player to do this! &eTry /heal <player>");
+                    return true;
+                }
 
-        if (sender instanceof Player) {
-            Player player = (Player) sender;
-            setHealth(player);
-            if (enableMsg) ChatUtils.msg(player, healMsg);
-            return true;
+                Player player = (Player) sender;
+                setHealth(player);
+                if (enableMsg) ChatUtils.msg(player, healMsg);
+                return true;
+            case 1:
+                if (!sender.hasPermission("essentialserver.heal.others")) {
+                    ChatUtils.sendMessage(sender, plugin.pMsg);
+                    return true;
+                }
+                Player target = Bukkit.getPlayerExact(args[0]);
+                if (target == null) {
+                    ChatUtils.msg(sender, plugin.getOfflinePlayerMessage(args[0]));
+                    return true;
+                }
+                setHealth(target);
+                ChatUtils.sendMessages(sender, healMsg, healOtherMsg, healMsg, enableMsg, target);
+                return true;
+            default:
+                String syntax = "&cIncorrect Syntax! &eTry /heal";
+                if(sender.hasPermission("essentialserver.heal.others")) {
+                    syntax = syntax + " or /heal <player>";
+                }
+                ChatUtils.msg(sender, syntax);
+                return true;
         }
-        ChatUtils.msg(sender, "&cYou must be a player to execute this command!");
-        return true;
     }
 
     private void setHealth(Player p) {
         double h = p.getHealth();
         int f = p.getFoodLevel();
-        double hAmt = h + healAmount;
+        h = h + healAmount;
         double maxHealth = p.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue();
-        if(hAmt > maxHealth) hAmt = maxHealth;
-        int fAmt = f + healAmount;
-        if(fAmt > 20) fAmt = 20;
-        p.setHealth(hAmt);
-        p.setFoodLevel(fAmt);
+        if(h > maxHealth) h = maxHealth;
+        f = f + healAmount;
+        if(f > 20) f = 20;
+        p.setHealth(h);
+        p.setFoodLevel(f);
         p.setFireTicks(0);
     }
 

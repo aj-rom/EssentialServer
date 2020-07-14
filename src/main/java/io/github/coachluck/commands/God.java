@@ -1,6 +1,6 @@
 /*
  *     File: God.java
- *     Last Modified: 7/13/20, 1:48 AM
+ *     Last Modified: 7/13/20, 11:35 PM
  *     Project: EssentialServer
  *     Copyright (C) 2020 CoachL_ck
  *
@@ -37,46 +37,63 @@ public class God implements CommandExecutor {
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         String godOtherMsg = plugin.getConfig().getString("god.others-on-message");
         String godOtherOffMsg = plugin.getConfig().getString("god.others-off-message");
-        boolean enableMsg = plugin.getConfig().getBoolean("god.message-enable");
+        final boolean enableMsg = plugin.getConfig().getBoolean("god.message-enable");
 
-        if(args.length == 0 && sender.hasPermission("essentialserver.god")) {
-            if(sender instanceof Player) godCheck((Player) sender);
-            else ChatUtils.msg(sender, ChatUtils.format("&cYou must be a player to execute this command!"));
-        }
-        else if (args.length == 1 && sender.hasPermission("essentialserver.god.others")) {
-            Player target = Bukkit.getPlayerExact(args[0]);
-            if(target == null) {
-                ChatUtils.msg(sender, plugin.getOfflinePlayerMessage(args[0]));
+        switch(args.length) {
+            case 0:
+                if(!(sender instanceof Player)) {
+                    ChatUtils.msg(sender, "&cYou must be a player to do this! &eTry /god <player>");
+                    return true;
+                }
+                godCheck((Player) sender);
                 return true;
-            }
-
-            godCheck(target);
-
-            if(enableMsg && !target.getName().equals(sender.getName())) {
-                if (target.isInvulnerable()) {
-                    ChatUtils.msg(sender, godOtherMsg.replace("%player%", target.getDisplayName()));
+            case 1:
+                if(!sender.hasPermission("essentialserver.god.others")) {
+                    ChatUtils.sendMessage(sender, plugin.pMsg);
                     return true;
                 }
 
-                ChatUtils.msg(sender, godOtherOffMsg.replace("%player%", target.getDisplayName()));
+                Player target = Bukkit.getPlayerExact(args[0]);
+                if(target == null) {
+                    ChatUtils.msg(sender, plugin.getOfflinePlayerMessage(args[0]));
+                    return true;
+                }
+
+                godCheck(target);
+                if(enableMsg && !target.getName().equals(sender.getName())) {
+                    if (target.isInvulnerable()) {
+                        ChatUtils.msg(sender, godOtherMsg.replace("%player%", target.getDisplayName()));
+                        return true;
+                    }
+
+                    ChatUtils.msg(sender, godOtherOffMsg.replace("%player%", target.getDisplayName()));
+                    return true;
+                }
                 return true;
-            }
+            default:
+                String syntax = "&cIncorrect Syntax! &eTry /god";
+                if(sender.hasPermission("essentialserver.god.others")) {
+                    syntax = syntax + " or /god <player>";
+                }
+                ChatUtils.msg(sender, syntax);
+                return true;
         }
-        else if (args.length > 1) ChatUtils.msg(sender, "&cToo many arguments! Try /god <player> or /god.");
-        return true;
     }
 
     private void godCheck(Player player) {
         String godMsg = plugin.getConfig().getString("god.on-message");
         String godOffMsg = plugin.getConfig().getString("god.off-message");
-        boolean enableMsg = plugin.getConfig().getBoolean("god.message-enable");
+        final boolean enableMsg = plugin.getConfig().getBoolean("god.message-enable");
 
         if(player.isInvulnerable()) {
             player.setInvulnerable(false);
-            if (enableMsg) ChatUtils.msg(player, godOffMsg.replace("%player%", player.getDisplayName()));
-        } else {
-            player.setInvulnerable(true);
-            if (enableMsg) ChatUtils.msg(player, godMsg.replace("%player%", player.getDisplayName()));
+            if (enableMsg)
+                ChatUtils.msg(player, godOffMsg.replace("%player%", player.getDisplayName()));
+            return;
         }
+
+        player.setInvulnerable(true);
+        if (enableMsg)
+            ChatUtils.msg(player, godMsg.replace("%player%", player.getDisplayName()));
     }
 }

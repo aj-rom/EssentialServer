@@ -3,6 +3,8 @@ api-version: 1.15
 version: 1.2.8
 main: io.github.coachluck.EssentialServer
 load: POSTWORLD
+author: CoachL_ck
+website: https://www.spigotmc.org/resources/essential-server.71299/
 commands:
   es:
     description: "Basic plugin information."
@@ -120,16 +122,16 @@ permissions:
       essentialserver.burn.others: true
       essentialserver.spawn: true
       essentialserver.spawn.others: true
+      essentialserver.setspawn: true
       essentialserver.vanish: true
       essentialserver.vanish.others: true
       essentialserver.tp: true
       essentialserver.tp.others: true
-      essentialserver.tp.bypass: true
       essentialserver.invsee: true
       essentialserver.warp: true
       essentialserver.setwarp: true
       essentialserver.delwarp: true
-      essentialserver.warp.*: true
+      essentialserver.warps.*: true
       essentialserver.tp.bypass-cooldown: true
       essentialserver.warp.bypass-cooldown: true
 

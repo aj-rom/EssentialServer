@@ -1,6 +1,6 @@
 /*
  *     File: Smite.java
- *     Last Modified: 4/10/20, 6:49 PM
+ *     Last Modified: 7/13/20, 10:26 PM
  *     Project: EssentialServer
  *     Copyright (C) 2020 CoachL_ck
  *
@@ -34,7 +34,7 @@ public class Smite implements CommandExecutor {
     private final EssentialServer plugin;
 
     public Smite(EssentialServer ins) {
-        this.plugin = ins; //stores plugin
+        this.plugin = ins;
     }
 
     @Override
@@ -42,31 +42,46 @@ public class Smite implements CommandExecutor {
         String smiteMsg = plugin.getConfig().getString("smite.message");
         String smiteOtherMsg = plugin.getConfig().getString("smite.others-message");
         String selfMsg = plugin.getConfig().getString("smite.self-message");
-        boolean enableMsg = plugin.getConfig().getBoolean("smite.message-enable");
+        final boolean enableMsg = plugin.getConfig().getBoolean("smite.message-enable");
+        final String permOther = "essentialserver.smite.others";
 
-        if (args.length == 0 && sender.hasPermission("essentialserver.smite")) {
-            if (sender instanceof Player) {
+        switch (args.length) {
+            case 0:
+                if(!(sender instanceof Player)) {
+                    ChatUtils.msg(sender, "&cYou must be a player to do this! &eTry /smite <player>");
+                    return true;
+                }
+
                 Player player = (Player) sender;
                 Location pLoc = player.getLocation();
+
                 player.getWorld().strikeLightning(pLoc);
                 if (enableMsg) ChatUtils.msg(player, selfMsg);
-            } else ChatUtils.msg(sender, "&cYou must be a player to execute this command!");
-
-        } else if (args.length == 1 && sender.hasPermission("essentialserver.smite.others")) {
-            Player target = Bukkit.getPlayerExact(args[0]);
-            if(target == null) {
-                ChatUtils.msg(sender, "&cThe specified player could not be found!");
                 return true;
-            }
-            try {
+            case 1:
+                if(!sender.hasPermission(permOther)) {
+                    ChatUtils.msg(sender, plugin.pMsg);
+                    return true;
+                }
+
+                Player target = Bukkit.getPlayerExact(args[0]);
+                if(target == null) {
+                    ChatUtils.msg(sender, "&cThe specified player could not be found!");
+                    return true;
+                }
 
                 Location tLoc = target.getLocation();
                 target.getWorld().strikeLightning(tLoc);
                 ChatUtils.sendMessages(sender, smiteMsg, smiteOtherMsg, selfMsg, enableMsg, target);
-            } catch (NullPointerException e) {
-                ChatUtils.msg(sender, "&cThe specified player could not be found!");
-            }
-        } else if (args.length > 1) ChatUtils.msg(sender, "&cToo many arguments! Try /smite <player> or /smite.");
-        return true;
+                return true;
+            default:
+                String syntax = "&cIncorrect Syntax! &eTry /smite";
+                if(sender.hasPermission(permOther)) {
+                    syntax = syntax + " or /smite <player>";
+                }
+
+                ChatUtils.msg(sender, syntax);
+                return true;
+        }
     }
 }

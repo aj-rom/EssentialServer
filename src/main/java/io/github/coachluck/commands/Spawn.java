@@ -1,6 +1,6 @@
 /*
  *     File: Spawn.java
- *     Last Modified: 6/28/20, 6:13 PM
+ *     Last Modified: 7/13/20, 11:23 PM
  *     Project: EssentialServer
  *     Copyright (C) 2020 CoachL_ck
  *
@@ -40,13 +40,38 @@ public class Spawn implements CommandExecutor {
             setLocation(world.getSpawnLocation());
         }
     }
+
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
+        if(cmd.getName().equalsIgnoreCase("setspawn")) {
+            if(!(sender instanceof Player)) {
+                ChatUtils.logMsg("&cYou must be a player to do this!");
+                return true;
+            }
+
+            Player p = (Player) sender;
+
+            plugin.getConfig().set("spawn.world", p.getWorld().getName());
+            plugin.getConfig().set("spawn.x", p.getLocation().getX());
+            plugin.getConfig().set("spawn.y", p.getLocation().getY());
+            plugin.getConfig().set("spawn.z", p.getLocation().getZ());
+            plugin.getConfig().set("spawn.yaw", p.getLocation().getYaw());
+            plugin.getConfig().set("spawn.pitch", p.getLocation().getPitch());
+            plugin.getConfig().set("spawn.last-saved-by", p.getName());
+            plugin.saveConfig();
+
+            World world = p.getWorld();
+            world.setSpawnLocation(p.getLocation());
+            ChatUtils.msg(p, "&7You have &asuccessfully set the spawn.");
+            return true;
+        }
+
         String spawnMsg = plugin.getConfig().getString("spawn.spawn-message");
         String spawnOtherMsg = plugin.getConfig().getString("spawn.other-message");
         boolean enableMessage = plugin.getConfig().getBoolean("spawn.enable-message");
         String offlinePlayer = plugin.getConfig().getString("offline-player");
 
+        // TODO : Compress into switch statement and ensure if a player does /spawn <themselves> it only sends them one message
         Location spawn_loc = getSpawnLocation();
         if (!(sender instanceof Player)) {
             if(args.length < 1) {
@@ -75,24 +100,23 @@ public class Spawn implements CommandExecutor {
                 return true;
             case 1:
                 if (!player.hasPermission("essentialserver.spawn.others")) {
-                    player.sendMessage(ChatUtils.format(plugin.pMsg));
+                    ChatUtils.sendMessage(sender, plugin.pMsg);
                     return true;
                 }
                 Player target = Bukkit.getPlayerExact(args[0]);
                 if (target == null) {
-                    ChatUtils.msg(player, offlinePlayer
-                            .replaceAll("%player%", args[0]));
+                    ChatUtils.msg(player, plugin.getOfflinePlayerMessage(args[0]));
                     return true;
                 }
 
                 target.teleport(spawn_loc);
                 if (enableMessage) {
                     ChatUtils.msg(target, spawnMsg);
-                    ChatUtils.msg(player, spawnOtherMsg
-                            .replaceAll("%player%", target.getName()));
+                    ChatUtils.msg(player, spawnOtherMsg.replaceAll("%player%", target.getName()));
                 }
                 return true;
             default:
+                // TODO : Add Syntax Error
                     player.teleport(spawn_loc);
                 return true;
         }

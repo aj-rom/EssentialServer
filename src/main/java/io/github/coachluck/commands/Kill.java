@@ -1,6 +1,6 @@
 /*
  *     File: Kill.java
- *     Last Modified: 4/10/20, 6:49 PM
+ *     Last Modified: 7/13/20, 11:38 PM
  *     Project: EssentialServer
  *     Copyright (C) 2020 CoachL_ck
  *
@@ -29,7 +29,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 public class Kill implements CommandExecutor {
-    private EssentialServer ins;
+    private final EssentialServer ins;
 
     public Kill(EssentialServer ins) {
         this.ins = ins;
@@ -40,25 +40,39 @@ public class Kill implements CommandExecutor {
         String killMsg = ins.getConfig().getString("kill.message");
         String killOtherMsg = ins.getConfig().getString("kill.others-message");
         String suicideMsg = ins.getConfig().getString("kill.suicide-message");
-        boolean enableMsg = ins.getConfig().getBoolean("kill.message-enable");
-        String offlinePlayer = ins.getConfig().getString("offline-player");
+        final boolean enableMsg = ins.getConfig().getBoolean("kill.message-enable");
 
-        if (args.length == 0 && sender.hasPermission("essentialserver.kill")) {
-            if (sender instanceof Player) {
+        switch(args.length) {
+            case 0:
+                if(!(sender instanceof Player)) {
+                    ChatUtils.msg(sender, "&cYou must be a player to do this! &eTry /kill <player>");
+                    return true;
+                }
                 Player player = (Player) sender;
                 if (enableMsg) ChatUtils.msg(player, suicideMsg);
                 player.setHealth(0);
-            } else ChatUtils.msg(sender, "&cYou must be a player to use this command!");
-        } else if (args.length == 1 && sender.hasPermission("essentialserver.kill.others")) {
-            try {
+                return true;
+            case 1:
+                if(!sender.hasPermission("essentialserver.kill.others")) {
+                    ChatUtils.sendMessage(sender, ins.pMsg);
+                    return true;
+                }
                 Player target = Bukkit.getPlayerExact(args[0]);
+                if(target == null) {
+                    ChatUtils.msg(sender, ins.getOfflinePlayerMessage(args[0]));
+                    return true;
+                }
+
                 target.setHealth(0);
                 ChatUtils.sendMessages(sender, killMsg, killOtherMsg, suicideMsg, enableMsg, target);
-            }
-            catch (NullPointerException e){
-                ChatUtils.msg(sender, offlinePlayer.replaceAll("%player%", args[0]));
-            }
-        } else if (args.length > 1) ChatUtils.msg(sender, "&cToo many arguments! &7Try &e/kill &c<&bplayer&c> &7or &e/kill.");
-        return true;
+                return true;
+            default:
+                String syntax = "&cIncorrect Syntax! &eTry /kill";
+                if(sender.hasPermission("essentialserver.kill.others")) {
+                    syntax = syntax + " or /kill <player>";
+                }
+                ChatUtils.msg(sender, syntax);
+                return true;
+        }
     }
 }

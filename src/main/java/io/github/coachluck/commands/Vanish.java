@@ -1,6 +1,6 @@
 /*
  *     File: Vanish.java
- *     Last Modified: 7/13/20, 1:39 AM
+ *     Last Modified: 7/13/20, 11:25 PM
  *     Project: EssentialServer
  *     Copyright (C) 2020 CoachL_ck
  *
@@ -32,7 +32,7 @@ import java.util.UUID;
 
 public class Vanish implements CommandExecutor {
 
-    private EssentialServer plugin;
+    private final EssentialServer plugin;
     private String vanishMsg;
     private String vanishOffMsg;
     private boolean enableMsg;
@@ -50,12 +50,18 @@ public class Vanish implements CommandExecutor {
         vanishOffMsg = plugin.getConfig().getString("vanish.off-message");
         final String offlinePlayer = plugin.getConfig().getString("offline-player");
 
+        // TODO : Add permission message and change to switch statement
         if(args.length == 0 && sender.hasPermission("essentialserver.vanish")) {
-            if(sender instanceof Player) {
-                Player p = (Player) sender;
-                vanishCheck(p.getUniqueId());
-            } else ChatUtils.logMsg("&cYou must be a player to execute this command!");
+            if(!(sender instanceof Player)) {
+                ChatUtils.logMsg("&cYou must be a player to do this! &eTry /vanish <player>");
+                return true;
+
+            }
+            Player p = (Player) sender;
+            vanishCheck(p.getUniqueId());
+            return true;
         }
+        // TODO : Permission message
         else if (args.length == 1 && sender.hasPermission("essentialserver.vanish.others")) {
             Player tP = Bukkit.getPlayerExact(args[0]);
             if(tP == null) {
@@ -71,6 +77,7 @@ public class Vanish implements CommandExecutor {
                     ChatUtils.msg(sender, vanishOtherOffMsg.replaceAll("%player%", tP.getDisplayName()));
             }
         }
+        // TODO : Add Syntax for perm support.
         else if (args.length > 1)
             ChatUtils.msg(sender, "&cToo many arguments! Try /vanish <player> or /vanish.");
 
