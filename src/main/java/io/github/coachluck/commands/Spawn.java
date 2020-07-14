@@ -1,6 +1,6 @@
 /*
  *     File: Spawn.java
- *     Last Modified: 7/13/20, 11:23 PM
+ *     Last Modified: 7/14/20, 12:48 AM
  *     Project: EssentialServer
  *     Copyright (C) 2020 CoachL_ck
  *
@@ -68,56 +68,43 @@ public class Spawn implements CommandExecutor {
 
         String spawnMsg = plugin.getConfig().getString("spawn.spawn-message");
         String spawnOtherMsg = plugin.getConfig().getString("spawn.other-message");
-        boolean enableMessage = plugin.getConfig().getBoolean("spawn.enable-message");
-        String offlinePlayer = plugin.getConfig().getString("offline-player");
+        final boolean enableMessage = plugin.getConfig().getBoolean("spawn.enable-message");
 
-        // TODO : Compress into switch statement and ensure if a player does /spawn <themselves> it only sends them one message
         Location spawn_loc = getSpawnLocation();
-        if (!(sender instanceof Player)) {
-            if(args.length < 1) {
-                ChatUtils.logMsg("&cIncorrect usage, try &e/spawn &7[&bplayer&7]");
-                return true;
-            }
-            Player target = Bukkit.getPlayerExact(args[0]);
-            if (target == null) {
-                ChatUtils.msg(sender, offlinePlayer.replaceAll("%player%", args[0]));
-                return true;
-            }
-
-            target.teleport(spawn_loc);
-            if (enableMessage) {
-                ChatUtils.msg(target, spawnMsg);
-                ChatUtils.msg(sender, spawnOtherMsg.replaceAll("%player%", target.getName()));
-            }
-            return true;
-        }
-
-        Player player = (Player) sender;
-        switch(args.length) {
+        switch (args.length) {
             case 0:
-                if (enableMessage) ChatUtils.msg(player, spawnMsg);
-                player.teleport(spawn_loc);
+                if(!(sender instanceof Player)) {
+                    ChatUtils.logMsg("&cIncorrect usage, try &e/spawn &7[&bplayer&7]");
+                    return true;
+                }
+                ((Player) sender).teleport(spawn_loc);
+                if(enableMessage) {
+                    ChatUtils.msg(sender, spawnMsg);
+                }
                 return true;
             case 1:
-                if (!player.hasPermission("essentialserver.spawn.others")) {
+                if (!sender.hasPermission("essentialserver.spawn.others")) {
                     ChatUtils.sendMessage(sender, plugin.pMsg);
                     return true;
                 }
                 Player target = Bukkit.getPlayerExact(args[0]);
                 if (target == null) {
-                    ChatUtils.msg(player, plugin.getOfflinePlayerMessage(args[0]));
+                    ChatUtils.msg(sender, plugin.getOfflinePlayerMessage(args[0]));
                     return true;
                 }
 
                 target.teleport(spawn_loc);
                 if (enableMessage) {
                     ChatUtils.msg(target, spawnMsg);
-                    ChatUtils.msg(player, spawnOtherMsg.replaceAll("%player%", target.getName()));
+                    ChatUtils.msg(sender, spawnOtherMsg.replaceAll("%player%", target.getName()));
                 }
                 return true;
             default:
-                // TODO : Add Syntax Error
-                    player.teleport(spawn_loc);
+                String syntax = "&cIncorrect Syntax! &eTry /spawn";
+                if(sender.hasPermission("essentialserver.spawn.others")) {
+                    syntax = syntax + " or /spawn <player>";
+                }
+                ChatUtils.msg(sender, syntax);
                 return true;
         }
     }
