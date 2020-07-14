@@ -1,6 +1,6 @@
 /*
  *     File: IGameMode.java
- *     Last Modified: 7/13/20, 11:37 PM
+ *     Last Modified: 7/14/20, 12:50 AM
  *     Project: EssentialServer
  *     Copyright (C) 2020 CoachL_ck
  *
@@ -52,7 +52,7 @@ public class IGameMode implements CommandExecutor {
                     badGamemode(sender);
                     return true;
                 }
-                changeGM(args[0], (Player) sender, sender);
+                changeGM(args[0], (Player) sender);
                 return true;
             case 2:
                 if(!sender.hasPermission("essentialserver.gamemode.others")) {
@@ -73,7 +73,7 @@ public class IGameMode implements CommandExecutor {
                             .replaceAll("%player%", target.getDisplayName())
                             .replaceAll("%mode%", getGamemodeName(args[0])));
                 }
-                changeGM(args[0], target, sender);
+                changeGM(args[0], target);
                 return true;
             default:
                 badUse(sender);
@@ -85,9 +85,8 @@ public class IGameMode implements CommandExecutor {
      * Changes the gamemode of the player w the args
      * @param gamemode the gamemode to switch too
      * @param target the player to change the gamemode of
-     * @param s the player changing the gamemode
      */
-    private void changeGM(String gamemode, Player target, CommandSender s) {
+    private void changeGM(String gamemode, Player target) {
         String GAMEMODE = gamemode.toLowerCase();
         boolean enableMsg = plugin.getConfig().getBoolean("gamemode.message-enable");
         String gMsg = plugin.getConfig().getString("gamemode.message");
