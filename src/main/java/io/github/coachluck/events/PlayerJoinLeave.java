@@ -1,6 +1,6 @@
 /*
  *     File: PlayerJoinLeave.java
- *     Last Modified: 7/14/20, 12:12 AM
+ *     Last Modified: 7/14/20, 12:41 AM
  *     Project: EssentialServer
  *     Copyright (C) 2020 CoachL_ck
  *
@@ -56,27 +56,25 @@ public class PlayerJoinLeave implements Listener {
             e.setJoinMessage(
                     ChatUtils.format(joinMsg.replace("%player%", player.getDisplayName())));
         }
-        if(plugin.updateMsg) {
-            if(player.isOp() || player.hasPermission("essentialserver.*")) {
-                BaseComponent pre = new TextComponent(ChatUtils.format("&8[&cEssential&7Server&8] "));
+        if(plugin.updateMsg && (player.isOp() || player.hasPermission("essentialserver.*"))) {
+            BaseComponent pre = new TextComponent(ChatUtils.format("&8[&cEssential&7Server&8] "));
 
-                BaseComponent front = new TextComponent("A new update is available! Click ");
-                front.setColor(ChatColor.YELLOW);
+            BaseComponent front = new TextComponent("A new update is available! Click ");
+            front.setColor(ChatColor.YELLOW);
 
-                BaseComponent button = new TextComponent("here");
-                button.setColor(ChatColor.GOLD);
-                button.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(ChatUtils.format("&7Click Me!")).create()));
-                button.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://bit.ly/346mO6j"));
-                BaseComponent end = new TextComponent(" to download the newest version.");
-                end.setColor(ChatColor.YELLOW);
+            BaseComponent button = new TextComponent("here");
+            button.setColor(ChatColor.GOLD);
+            button.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(ChatUtils.format("&7Click Me!")).create()));
+            button.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://bit.ly/346mO6j"));
+            BaseComponent end = new TextComponent(" to download the newest version.");
+            end.setColor(ChatColor.YELLOW);
 
-                ComponentBuilder comp = new ComponentBuilder();
-                comp.append(pre);
-                comp.append(front);
-                comp.append(button);
-                comp.append(end);
-                player.spigot().sendMessage(comp.create());
-            }
+            ComponentBuilder comp = new ComponentBuilder();
+            comp.append(pre);
+            comp.append(front);
+            comp.append(button);
+            comp.append(end);
+            player.spigot().sendMessage(comp.create());
         }
     }
 
