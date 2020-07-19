@@ -12,7 +12,7 @@ ___
 -   [x] Spigot (1.13+)
 -   [x] Paper (1.13+)
 -   [X] Tunity (1.13+)
--   [ ] Bukkit
+-   [ ] Bukkit (Will add support in the future)
 
 ##### Supported Versions
 -   [X] 1.16+
