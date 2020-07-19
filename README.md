@@ -9,13 +9,10 @@
 ___
 
 #### Supported Platforms
--   [x] Spigot
--   [x] Paper
+-   [x] Spigot (1.13+)
+-   [x] Paper (1.13+)
+-   [X] Tunity (1.13+)
 -   [ ] Bukkit
--   [ ] ySpigot
--   [ ] TacoSpigot
--   [ ] Tunity
--   [ ] Sponge
 
 ##### Supported Versions
 -   [X] 1.16+
