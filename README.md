@@ -9,7 +9,7 @@
 ___
 
 #### Supported Platforms
--   [x] Spigot (1.13+)
+-   [x] [Spigot](https://www.spigotmc.org/resources/essential-server.71299/) (1.13+)
 -   [x] Paper (1.13+)
 -   [X] Tunity (1.13+)
 -   [ ] Bukkit (Will add support in the future)
